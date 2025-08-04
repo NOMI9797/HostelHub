@@ -4,7 +4,13 @@ const client = new Client()
   .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
   .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!);
 
+// Public client for non-authenticated access
+const publicClient = new Client()
+  .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
+  .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!);
+
 const databases = new Databases(client);
+const publicDatabases = new Databases(publicClient);
 const storage = new Storage(client);
 
 const DATABASE_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!;
@@ -149,30 +155,61 @@ export class HostelService {
   // Get all hostels
   static async getAllHostels(): Promise<HostelListItem[]> {
     try {
-      const response = await databases.listDocuments(
-        DATABASE_ID,
-        COLLECTION_HOSTELS
-      );
+      // Try public access first (for non-authenticated users)
+      try {
+        const response = await publicDatabases.listDocuments(
+          DATABASE_ID,
+          COLLECTION_HOSTELS
+        );
 
-      return response.documents.map((doc: any) => ({
-        hostelId: doc.hostelId,
-        hostelName: doc.hostelName,
-        description: doc.description,
-        city: doc.city,
-        area: doc.area,
-        nearbyLandmark: doc.nearbyLandmark,
-        mainPhoto: doc.mainPhoto,
-        galleryImages: doc.galleryImages,
-        ownerName: doc.ownerName,
-        ownerPhone: doc.ownerPhone,
-        ownerEmail: doc.ownerEmail,
-        roomTypes: doc.roomTypes,
-        facilities: doc.facilities,
-        genderSpecific: doc.genderSpecific,
-        ownerId: doc.ownerId,
-        createdAt: doc.$createdAt,
-        updatedAt: doc.$updatedAt
-      }));
+        return response.documents.map((doc: any) => ({
+          hostelId: doc.hostelId,
+          hostelName: doc.hostelName,
+          description: doc.description,
+          city: doc.city,
+          area: doc.area,
+          nearbyLandmark: doc.nearbyLandmark,
+          mainPhoto: doc.mainPhoto,
+          galleryImages: doc.galleryImages,
+          ownerName: doc.ownerName,
+          ownerPhone: doc.ownerPhone,
+          ownerEmail: doc.ownerEmail,
+          roomTypes: doc.roomTypes,
+          facilities: doc.facilities,
+          genderSpecific: doc.genderSpecific,
+          ownerId: doc.ownerId,
+          createdAt: doc.$createdAt,
+          updatedAt: doc.$updatedAt
+        }));
+      } catch (publicError) {
+        console.log('Public access failed, trying authenticated access...');
+        
+        // Fallback to authenticated access
+        const response = await databases.listDocuments(
+          DATABASE_ID,
+          COLLECTION_HOSTELS
+        );
+
+        return response.documents.map((doc: any) => ({
+          hostelId: doc.hostelId,
+          hostelName: doc.hostelName,
+          description: doc.description,
+          city: doc.city,
+          area: doc.area,
+          nearbyLandmark: doc.nearbyLandmark,
+          mainPhoto: doc.mainPhoto,
+          galleryImages: doc.galleryImages,
+          ownerName: doc.ownerName,
+          ownerPhone: doc.ownerPhone,
+          ownerEmail: doc.ownerEmail,
+          roomTypes: doc.roomTypes,
+          facilities: doc.facilities,
+          genderSpecific: doc.genderSpecific,
+          ownerId: doc.ownerId,
+          createdAt: doc.$createdAt,
+          updatedAt: doc.$updatedAt
+        }));
+      }
     } catch (error) {
       console.error('Error fetching hostels:', error);
       throw error;
@@ -197,18 +234,35 @@ export class HostelService {
   // Get hostel by ID
   static async getHostelById(hostelId: string): Promise<HostelResponse> {
     try {
-      // First try to find by hostelId field
-      const response = await databases.listDocuments(
-        DATABASE_ID,
-        COLLECTION_HOSTELS,
-        [Query.equal('hostelId', hostelId)]
-      );
-      
-      if (response.documents.length === 0) {
-        throw new Error('Hostel not found');
+      // Try public access first (for non-authenticated users)
+      try {
+        const response = await publicDatabases.listDocuments(
+          DATABASE_ID,
+          COLLECTION_HOSTELS,
+          [Query.equal('hostelId', hostelId)]
+        );
+        
+        if (response.documents.length === 0) {
+          throw new Error('Hostel not found');
+        }
+        
+        return response.documents[0] as unknown as HostelResponse;
+      } catch (publicError) {
+        console.log('Public access failed for hostel details, trying authenticated access...');
+        
+        // Fallback to authenticated access
+        const response = await databases.listDocuments(
+          DATABASE_ID,
+          COLLECTION_HOSTELS,
+          [Query.equal('hostelId', hostelId)]
+        );
+        
+        if (response.documents.length === 0) {
+          throw new Error('Hostel not found');
+        }
+        
+        return response.documents[0] as unknown as HostelResponse;
       }
-      
-      return response.documents[0] as unknown as HostelResponse;
     } catch (error) {
       console.error('Error fetching hostel:', error);
       throw error;
@@ -315,10 +369,20 @@ export class HostelService {
   // Search hostels
   static async searchHostels(query: string, location?: string): Promise<HostelListItem[]> {
     try {
-      const response = await databases.listDocuments(
-        DATABASE_ID,
-        COLLECTION_HOSTELS
-      );
+      // Try public access first (for non-authenticated users)
+      let response;
+      try {
+        response = await publicDatabases.listDocuments(
+          DATABASE_ID,
+          COLLECTION_HOSTELS
+        );
+      } catch (publicError) {
+        console.log('Public access failed for search, trying authenticated access...');
+        response = await databases.listDocuments(
+          DATABASE_ID,
+          COLLECTION_HOSTELS
+        );
+      }
       
       // Filter results based on search criteria
       let filteredResults = response.documents;
@@ -339,7 +403,7 @@ export class HostelService {
       }
       
       return filteredResults.map((doc: any) => ({
-        hostelId: doc.$id,
+        hostelId: doc.hostelId || doc.$id,
         hostelName: doc.hostelName,
         description: doc.description,
         city: doc.city,

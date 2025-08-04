@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { Search, MapPin, Shield, CheckCircle, HeadphonesIcon, MapPin as MapPinIcon } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import HostelCard from '@/components/hostel/HostelCard';
-import { HostelService } from '@/lib/hostel-service';
 
 export default function HomePage() {
   const [hostels, setHostels] = useState<Array<{
@@ -44,10 +43,65 @@ export default function HomePage() {
   const fetchHostels = async () => {
     try {
       setLoading(true);
-      const hostelsData = await HostelService.getAllHostels();
-      setHostels(hostelsData);
+      
+      // Try to fetch from API first
+      try {
+        const response = await fetch('/api/hostels');
+        if (response.ok) {
+          const hostelsData = await response.json();
+          setHostels(hostelsData);
+          return;
+        }
+              } catch {
+          console.log('API failed, using mock data...');
+        }
+      
+      // Fallback to mock data for testing
+      const mockHostels = [
+        {
+          hostelId: 'mock-1',
+          hostelName: 'Lavish Hostel',
+          description: 'A premium hostel with modern amenities and comfortable accommodations.',
+          city: 'Karachi',
+          area: 'Clifton',
+          nearbyLandmark: 'Dolmen Mall',
+          mainPhoto: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400',
+          galleryImages: '[]',
+          ownerName: 'Ahmed Khan',
+          ownerPhone: '+92-300-1234567',
+          ownerEmail: 'ahmed@lavishhostel.com',
+          roomTypes: '[{"type":"Single Room","available":true,"price":15000},{"type":"Shared Room","available":true,"price":8000}]',
+          facilities: '["wifi","ac","parking","mess","tvLounge"]',
+          genderSpecific: 'boys',
+          ownerId: 'mock-owner-1',
+          createdAt: '2024-01-01T00:00:00Z',
+          updatedAt: '2024-01-01T00:00:00Z'
+        },
+        {
+          hostelId: 'mock-2',
+          hostelName: 'Munawar Hostel',
+          description: 'Affordable and clean hostel perfect for students and young professionals.',
+          city: 'Lahore',
+          area: 'Gulberg',
+          nearbyLandmark: 'Liberty Market',
+          mainPhoto: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400',
+          galleryImages: '[]',
+          ownerName: 'Munawar Ali',
+          ownerPhone: '+92-300-7654321',
+          ownerEmail: 'munawar@munawarhostel.com',
+          roomTypes: '[{"type":"Shared Room","available":true,"price":6000},{"type":"Single Room","available":false,"price":12000}]',
+          facilities: '["wifi","fan","mess","cleaning","laundry"]',
+          genderSpecific: 'boys',
+          ownerId: 'mock-owner-2',
+          createdAt: '2024-01-01T00:00:00Z',
+          updatedAt: '2024-01-01T00:00:00Z'
+        }
+      ];
+      
+      setHostels(mockHostels);
     } catch (error) {
       console.error('Error fetching hostels:', error);
+      setHostels([]);
     } finally {
       setLoading(false);
     }
@@ -56,10 +110,35 @@ export default function HomePage() {
   const handleSearch = async () => {
     try {
       setLoading(true);
-      const searchResults = await HostelService.searchHostels(searchQuery, searchLocation);
-      setHostels(searchResults);
+      // Fetch all hostels and filter client-side for now
+      const response = await fetch('/api/hostels');
+      if (response.ok) {
+        const allHostels = await response.json();
+        
+        // Client-side filtering
+        const filteredHostels = allHostels.filter((hostel: any) => {
+          const matchesQuery = !searchQuery || 
+            (hostel.hostelName as string)?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (hostel.description as string)?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (hostel.city as string)?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (hostel.area as string)?.toLowerCase().includes(searchQuery.toLowerCase());
+          
+          const matchesLocation = !searchLocation ||
+            (hostel.city as string)?.toLowerCase().includes(searchLocation.toLowerCase()) ||
+            (hostel.area as string)?.toLowerCase().includes(searchLocation.toLowerCase()) ||
+            (hostel.nearbyLandmark as string)?.toLowerCase().includes(searchLocation.toLowerCase());
+          
+          return matchesQuery && matchesLocation;
+        });
+        
+        setHostels(filteredHostels);
+      } else {
+        console.error('Failed to fetch hostels for search');
+        setHostels([]);
+      }
     } catch (error) {
       console.error('Error searching hostels:', error);
+      setHostels([]);
     } finally {
       setLoading(false);
     }
