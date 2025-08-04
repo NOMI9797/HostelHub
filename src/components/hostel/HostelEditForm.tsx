@@ -220,9 +220,12 @@ export default function HostelEditForm({
                   {editForm.galleryImages.map((imageId, index) => (
                     <div key={index} className="relative group">
                       <img
-                        src={HostelService.getFileUrl(imageId)}
+                        src={imageId.startsWith('http') ? imageId : HostelService.getFileUrl(imageId)}
                         alt={`Gallery ${index + 1}`}
                         className="w-full h-24 object-cover rounded-lg shadow-sm"
+                        onError={(e) => {
+                          e.currentTarget.src = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=200&h=100&fit=crop';
+                        }}
                       />
                       <button
                         type="button"

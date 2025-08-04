@@ -162,24 +162,24 @@ export class HostelService {
           COLLECTION_HOSTELS
         );
 
-        return response.documents.map((doc: any) => ({
-          hostelId: doc.hostelId,
-          hostelName: doc.hostelName,
-          description: doc.description,
-          city: doc.city,
-          area: doc.area,
-          nearbyLandmark: doc.nearbyLandmark,
-          mainPhoto: doc.mainPhoto,
-          galleryImages: doc.galleryImages,
-          ownerName: doc.ownerName,
-          ownerPhone: doc.ownerPhone,
-          ownerEmail: doc.ownerEmail,
-          roomTypes: doc.roomTypes,
-          facilities: doc.facilities,
-          genderSpecific: doc.genderSpecific,
-          ownerId: doc.ownerId,
-          createdAt: doc.$createdAt,
-          updatedAt: doc.$updatedAt
+        return response.documents.map((doc: Record<string, unknown>) => ({
+          hostelId: doc.hostelId as string,
+          hostelName: doc.hostelName as string,
+          description: doc.description as string,
+          city: doc.city as string,
+          area: doc.area as string,
+          nearbyLandmark: doc.nearbyLandmark as string,
+          mainPhoto: doc.mainPhoto as string,
+          galleryImages: doc.galleryImages as string,
+          ownerName: doc.ownerName as string,
+          ownerPhone: doc.ownerPhone as string,
+          ownerEmail: doc.ownerEmail as string,
+          roomTypes: doc.roomTypes as string,
+          facilities: doc.facilities as string,
+          genderSpecific: doc.genderSpecific as string,
+          ownerId: doc.ownerId as string,
+          createdAt: doc.$createdAt as string,
+          updatedAt: doc.$updatedAt as string
         }));
       } catch (publicError) {
         console.log('Public access failed, trying authenticated access...');
@@ -190,24 +190,24 @@ export class HostelService {
           COLLECTION_HOSTELS
         );
 
-        return response.documents.map((doc: any) => ({
-          hostelId: doc.hostelId,
-          hostelName: doc.hostelName,
-          description: doc.description,
-          city: doc.city,
-          area: doc.area,
-          nearbyLandmark: doc.nearbyLandmark,
-          mainPhoto: doc.mainPhoto,
-          galleryImages: doc.galleryImages,
-          ownerName: doc.ownerName,
-          ownerPhone: doc.ownerPhone,
-          ownerEmail: doc.ownerEmail,
-          roomTypes: doc.roomTypes,
-          facilities: doc.facilities,
-          genderSpecific: doc.genderSpecific,
-          ownerId: doc.ownerId,
-          createdAt: doc.$createdAt,
-          updatedAt: doc.$updatedAt
+        return response.documents.map((doc: Record<string, unknown>) => ({
+          hostelId: doc.hostelId as string,
+          hostelName: doc.hostelName as string,
+          description: doc.description as string,
+          city: doc.city as string,
+          area: doc.area as string,
+          nearbyLandmark: doc.nearbyLandmark as string,
+          mainPhoto: doc.mainPhoto as string,
+          galleryImages: doc.galleryImages as string,
+          ownerName: doc.ownerName as string,
+          ownerPhone: doc.ownerPhone as string,
+          ownerEmail: doc.ownerEmail as string,
+          roomTypes: doc.roomTypes as string,
+          facilities: doc.facilities as string,
+          genderSpecific: doc.genderSpecific as string,
+          ownerId: doc.ownerId as string,
+          createdAt: doc.$createdAt as string,
+          updatedAt: doc.$updatedAt as string
         }));
       }
     } catch (error) {
@@ -388,7 +388,7 @@ export class HostelService {
       let filteredResults = response.documents;
       
       if (query || location) {
-        filteredResults = response.documents.filter((doc: any) => {
+        filteredResults = response.documents.filter((doc: Record<string, unknown>) => {
           const hostelName = (doc.hostelName as string)?.toLowerCase() || '';
           const city = (doc.city as string)?.toLowerCase() || '';
           const area = (doc.area as string)?.toLowerCase() || '';
@@ -402,24 +402,24 @@ export class HostelService {
         });
       }
       
-      return filteredResults.map((doc: any) => ({
-        hostelId: doc.hostelId || doc.$id,
-        hostelName: doc.hostelName,
-        description: doc.description,
-        city: doc.city,
-        area: doc.area,
-        nearbyLandmark: doc.nearbyLandmark,
-        mainPhoto: doc.mainPhoto,
-        galleryImages: doc.galleryImages,
-        ownerName: doc.ownerName,
-        ownerPhone: doc.ownerPhone,
-        ownerEmail: doc.ownerEmail,
-        roomTypes: doc.roomTypes,
-        facilities: doc.facilities,
-        genderSpecific: doc.genderSpecific,
-        ownerId: doc.ownerId,
-        createdAt: doc.$createdAt,
-        updatedAt: doc.$updatedAt
+      return filteredResults.map((doc: Record<string, unknown>) => ({
+        hostelId: (doc.hostelId || doc.$id) as string,
+        hostelName: doc.hostelName as string,
+        description: doc.description as string,
+        city: doc.city as string,
+        area: doc.area as string,
+        nearbyLandmark: doc.nearbyLandmark as string,
+        mainPhoto: doc.mainPhoto as string,
+        galleryImages: doc.galleryImages as string,
+        ownerName: doc.ownerName as string,
+        ownerPhone: doc.ownerPhone as string,
+        ownerEmail: doc.ownerEmail as string,
+        roomTypes: doc.roomTypes as string,
+        facilities: doc.facilities as string,
+        genderSpecific: doc.genderSpecific as string,
+        ownerId: doc.ownerId as string,
+        createdAt: doc.$createdAt as string,
+        updatedAt: doc.$updatedAt as string
       }));
     } catch (error) {
       console.error('Error searching hostels:', error);

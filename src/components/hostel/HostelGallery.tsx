@@ -11,6 +11,11 @@ export default function HostelGallery({ mainPhoto, galleryImages, hostelName }: 
   const [selectedImage, setSelectedImage] = useState<string>(mainPhoto);
 
   const getFileUrl = (fileId: string) => {
+    // If it's already a full URL (like Unsplash), return it directly
+    if (fileId.startsWith('http')) {
+      return fileId;
+    }
+    // Otherwise, use HostelService
     return HostelService.getFileUrl(fileId);
   };
 
@@ -25,7 +30,8 @@ export default function HostelGallery({ mainPhoto, galleryImages, hostelName }: 
           alt={hostelName}
           className="w-full h-96 object-cover rounded-xl cursor-pointer transition-transform hover:scale-105"
           onError={(e) => {
-            e.currentTarget.style.display = 'none';
+            // Fallback to a placeholder image if the main image fails to load
+            e.currentTarget.src = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=400&fit=crop';
           }}
         />
         <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1">
@@ -55,7 +61,8 @@ export default function HostelGallery({ mainPhoto, galleryImages, hostelName }: 
                   alt={`${hostelName} ${index === 0 ? 'Main Photo' : `Gallery ${index}`}`}
                   className="w-full h-24 object-cover rounded-lg"
                   onError={(e) => {
-                    e.currentTarget.style.display = 'none';
+                    // Fallback to a placeholder image if the thumbnail fails to load
+                    e.currentTarget.src = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=200&h=100&fit=crop';
                   }}
                 />
                 <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 rounded-lg flex items-center justify-center">

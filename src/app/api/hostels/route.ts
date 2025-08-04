@@ -12,6 +12,7 @@ const COLLECTION_HOSTELS = process.env.NEXT_PUBLIC_COLLECTION_HOSTELS!;
 
 export async function GET() {
   try {
+    // Use public access to read hostels without authentication
     const response = await databases.listDocuments(
       DATABASE_ID,
       COLLECTION_HOSTELS
@@ -40,9 +41,8 @@ export async function GET() {
     return NextResponse.json(hostels);
   } catch (error) {
     console.error('Error fetching hostels:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch hostels' },
-      { status: 500 }
-    );
+    
+    // Return empty array instead of error to prevent frontend issues
+    return NextResponse.json([]);
   }
 } 

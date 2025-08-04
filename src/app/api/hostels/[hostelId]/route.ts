@@ -12,10 +12,10 @@ const COLLECTION_HOSTELS = process.env.NEXT_PUBLIC_COLLECTION_HOSTELS!;
 
 export async function GET(
   request: Request,
-  { params }: { params: { hostelId: string } }
+  { params }: { params: Promise<{ hostelId: string }> }
 ) {
   try {
-    const { hostelId } = params;
+    const { hostelId } = await params;
 
     const response = await databases.listDocuments(
       DATABASE_ID,

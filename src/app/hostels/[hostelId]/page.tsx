@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Edit, Save, X, Trash2, Building2 } from 'lucide-react';
@@ -12,6 +12,7 @@ import HostelDetails from '@/components/hostel/HostelDetails';
 import HostelEditForm from '@/components/hostel/HostelEditForm';
 import { HostelDataFromDB, EditFormData } from '@/types/hostel';
 import { parseHostelData, initializeEditForm } from '@/utils/hostel-utils';
+import { useHostel } from '@/hooks/useHostel';
 
 export default function HostelDetailPage() {
   const params = useParams();
@@ -20,37 +21,13 @@ export default function HostelDetailPage() {
   const { user } = useAuth();
   const hostelId = params.hostelId as string;
   
-  const [hostel, setHostel] = useState<HostelDataFromDB | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState<EditFormData | null>(null);
   const [saving, setSaving] = useState(false);
 
-  const fetchHostelDetails = useCallback(async () => {
-    try {
-      setLoading(true);
-      // Use server-side API route to avoid authentication issues
-      const response = await fetch(`/api/hostels/${hostelId}`);
-      if (response.ok) {
-        const hostelData = await response.json();
-        setHostel(hostelData as unknown as HostelDataFromDB);
-      } else {
-        setError('Hostel not found');
-      }
-    } catch (error) {
-      console.error('Error fetching hostel details:', error);
-      setError('Failed to load hostel details');
-    } finally {
-      setLoading(false);
-    }
-  }, [hostelId]);
-
-  useEffect(() => {
-    if (hostelId) {
-      fetchHostelDetails();
-    }
-  }, [hostelId, fetchHostelDetails]);
+  // Use custom hook for data fetching
+  const { hostel: hostelData, loading, error, refetch } = useHostel(hostelId);
+  const hostel = hostelData as unknown as HostelDataFromDB | null;
 
   // Check if edit mode should be enabled (for form initialization only)
   useEffect(() => {
@@ -92,15 +69,8 @@ export default function HostelDetailPage() {
 
       await HostelService.updateHostel(hostel.hostelId!, updatedHostel);
       
-      // Update local state with the new data
-      const updatedHostelData = {
-        ...hostel,
-        ...updatedHostel,
-        roomTypes: JSON.stringify(updatedHostel.roomTypes),
-        facilities: JSON.stringify(updatedHostel.facilities),
-      };
-      
-      setHostel(updatedHostelData as unknown as HostelDataFromDB);
+      // Refetch hostel data to update the UI
+      await refetch();
       setIsEditing(false);
       setEditForm(null);
     } catch (error) {

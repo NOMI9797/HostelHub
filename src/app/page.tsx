@@ -1,170 +1,37 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Search, MapPin, Shield, CheckCircle, HeadphonesIcon, MapPin as MapPinIcon } from 'lucide-react';
+import { Search, Shield, CheckCircle, HeadphonesIcon, MapPin as MapPinIcon } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import HostelCard from '@/components/hostel/HostelCard';
+import { useHostels } from '@/hooks/useHostels';
 
 export default function HomePage() {
-  const [hostels, setHostels] = useState<Array<{
-    hostelId: string;
-    hostelName: string;
-    city: string;
-    area: string;
-    mainPhoto: string;
-    roomTypes: string;
-    facilities: string;
-    genderSpecific: string;
-  }>>([]);
-  const [loading, setLoading] = useState(true);
+  const { hostels, loading, searchHostels, clearSearch } = useHostels();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchLocation, setSearchLocation] = useState('');
   const [isFiltered, setIsFiltered] = useState(false);
-
-  useEffect(() => {
-    fetchHostels();
-  }, []);
 
   // Auto-search effect
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (searchQuery || searchLocation) {
-        handleSearch();
+        searchHostels(searchQuery, searchLocation);
         setIsFiltered(true);
       } else if (isFiltered) {
-        fetchHostels();
+        clearSearch();
         setIsFiltered(false);
       }
     }, 500); // 500ms delay to avoid too many API calls
 
     return () => clearTimeout(timeoutId);
-  }, [searchQuery, searchLocation]);
-
-  const fetchHostels = async () => {
-    try {
-      setLoading(true);
-      
-      // Try to fetch from API first
-      try {
-        const response = await fetch('/api/hostels');
-        if (response.ok) {
-          const hostelsData = await response.json();
-          setHostels(hostelsData);
-          return;
-        }
-              } catch {
-          console.log('API failed, using mock data...');
-        }
-      
-      // Fallback to mock data for testing
-      const mockHostels = [
-        {
-          hostelId: 'mock-1',
-          hostelName: 'Lavish Hostel',
-          description: 'A premium hostel with modern amenities and comfortable accommodations.',
-          city: 'Karachi',
-          area: 'Clifton',
-          nearbyLandmark: 'Dolmen Mall',
-          mainPhoto: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400',
-          galleryImages: '[]',
-          ownerName: 'Ahmed Khan',
-          ownerPhone: '+92-300-1234567',
-          ownerEmail: 'ahmed@lavishhostel.com',
-          roomTypes: '[{"type":"Single Room","available":true,"price":15000},{"type":"Shared Room","available":true,"price":8000}]',
-          facilities: '["wifi","ac","parking","mess","tvLounge"]',
-          genderSpecific: 'boys',
-          ownerId: 'mock-owner-1',
-          createdAt: '2024-01-01T00:00:00Z',
-          updatedAt: '2024-01-01T00:00:00Z'
-        },
-        {
-          hostelId: 'mock-2',
-          hostelName: 'Munawar Hostel',
-          description: 'Affordable and clean hostel perfect for students and young professionals.',
-          city: 'Lahore',
-          area: 'Gulberg',
-          nearbyLandmark: 'Liberty Market',
-          mainPhoto: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400',
-          galleryImages: '[]',
-          ownerName: 'Munawar Ali',
-          ownerPhone: '+92-300-7654321',
-          ownerEmail: 'munawar@munawarhostel.com',
-          roomTypes: '[{"type":"Shared Room","available":true,"price":6000},{"type":"Single Room","available":false,"price":12000}]',
-          facilities: '["wifi","fan","mess","cleaning","laundry"]',
-          genderSpecific: 'boys',
-          ownerId: 'mock-owner-2',
-          createdAt: '2024-01-01T00:00:00Z',
-          updatedAt: '2024-01-01T00:00:00Z'
-        }
-      ];
-      
-      setHostels(mockHostels);
-    } catch (error) {
-      console.error('Error fetching hostels:', error);
-      setHostels([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSearch = async () => {
-    try {
-      setLoading(true);
-      // Fetch all hostels and filter client-side for now
-      const response = await fetch('/api/hostels');
-      if (response.ok) {
-        const allHostels = await response.json();
-        
-        // Client-side filtering
-        const filteredHostels = allHostels.filter((hostel: any) => {
-          const matchesQuery = !searchQuery || 
-            (hostel.hostelName as string)?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (hostel.description as string)?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (hostel.city as string)?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (hostel.area as string)?.toLowerCase().includes(searchQuery.toLowerCase());
-          
-          const matchesLocation = !searchLocation ||
-            (hostel.city as string)?.toLowerCase().includes(searchLocation.toLowerCase()) ||
-            (hostel.area as string)?.toLowerCase().includes(searchLocation.toLowerCase()) ||
-            (hostel.nearbyLandmark as string)?.toLowerCase().includes(searchLocation.toLowerCase());
-          
-          return matchesQuery && matchesLocation;
-        });
-        
-        setHostels(filteredHostels);
-      } else {
-        console.error('Failed to fetch hostels for search');
-        setHostels([]);
-      }
-    } catch (error) {
-      console.error('Error searching hostels:', error);
-      setHostels([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [searchQuery, searchLocation, searchHostels, clearSearch, isFiltered]);
 
   const handleShowAll = () => {
     setSearchQuery('');
     setSearchLocation('');
     setIsFiltered(false);
-    fetchHostels();
-  };
-
-  const handleUseMyLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        () => {
-          // For now, just show a message. In a real app, you'd reverse geocode this
-          alert('Location detected! This feature will be implemented soon.');
-        },
-        () => {
-          alert('Unable to get your location. Please enter manually.');
-        }
-      );
-    } else {
-      alert('Geolocation is not supported by this browser.');
-    }
+    clearSearch();
   };
 
   return (
@@ -173,92 +40,75 @@ export default function HomePage() {
       <Header />
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-gray-50 to-blue-50 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-5xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Find Your Perfect Hostel
-          </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            Discover amazing hostels with verified listings, secure booking, and 24/7 support. 
-            Your next adventure starts here.
-          </p>
-
-          {/* Search Section */}
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 max-w-4xl mx-auto">
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Search hostels..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+      <section className="relative bg-gradient-to-br from-blue-50 to-indigo-100 py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center">
+            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+              Find Your Perfect
+              <span className="text-blue-600"> Hostel</span>
+            </h1>
+            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+              Discover amazing hostels across Pakistan. Book affordable, comfortable accommodations 
+              for students and travelers with ease.
+            </p>
+            
+            {/* Search Section */}
+            <div className="max-w-4xl mx-auto">
+              <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {/* Search Input */}
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <input
+                      type="text"
+                      placeholder="Search hostels..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
+                    />
+                  </div>
+                  
+                  {/* Location Input */}
+                  <div className="relative">
+                    <MapPinIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <input
+                      type="text"
+                      placeholder="Location..."
+                      value={searchLocation}
+                      onChange={(e) => setSearchLocation(e.target.value)}
+                      className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
+                    />
+                  </div>
+                  
+                  {/* Show All Button */}
+                  <button 
+                    onClick={handleShowAll}
+                    className="bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-all duration-200 font-medium"
+                  >
+                    Show All
+                  </button>
                 </div>
-                <div className="relative">
-                  <MapPinIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Enter destination..."
-                    value={searchLocation}
-                    onChange={(e) => setSearchLocation(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <button
-                  onClick={handleShowAll}
-                  className="w-full py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-all duration-200 font-semibold"
-                >
-                  Show All
-                </button>
               </div>
-              <div className="flex justify-center">
-                <button
-                  onClick={handleUseMyLocation}
-                  className="flex items-center space-x-2 text-blue-600 hover:text-blue-700 transition-colors"
-                >
-                  <MapPin className="w-4 h-4" />
-                  <span>Use My Location</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Trust Indicators */}
-          <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-4 sm:gap-6 mt-8">
-            <div className="flex items-center justify-center space-x-2 text-gray-600">
-              <Shield className="w-5 h-5 text-green-600" />
-              <span className="text-sm font-medium">Secure Booking</span>
-            </div>
-            <div className="flex items-center justify-center space-x-2 text-gray-600">
-              <CheckCircle className="w-5 h-5 text-green-600" />
-              <span className="text-sm font-medium">Verified Hostels</span>
-            </div>
-            <div className="flex items-center justify-center space-x-2 text-gray-600">
-              <HeadphonesIcon className="w-5 h-5 text-green-600" />
-              <span className="text-sm font-medium">24/7 Support</span>
             </div>
           </div>
         </div>
       </section>
 
       {/* Featured Hostels Section */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-8">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
               {isFiltered ? 'Search Results' : 'Featured Hostels'}
             </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               {isFiltered 
                 ? `Found ${hostels.length} hostel${hostels.length !== 1 ? 's' : ''} matching your search.`
-                : 'Handpicked accommodations with the highest ratings and best value for money.'
+                : 'Discover our top-rated hostels with excellent amenities and locations'
               }
             </p>
           </div>
-
+          
           {loading ? (
             <div className="text-center py-12">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
@@ -279,63 +129,71 @@ export default function HomePage() {
             </div>
           ) : (
             <div className="text-center py-12">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
-                <Search className="w-8 h-8 text-gray-400" />
+              <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Search className="w-12 h-12 text-gray-400" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                {isFiltered ? 'No Hostels Found' : 'Coming Soon'}
+                {isFiltered ? 'No Hostels Found' : 'No Hostels Available'}
               </h3>
-              <p className="text-gray-600 max-w-md mx-auto">
+              <p className="text-gray-600">
                 {isFiltered 
                   ? 'No hostels match your search criteria. Try adjusting your search terms or click "Show All" to see all available hostels.'
-                  : 'We\'re currently curating the best hostels for you. Be the first to discover amazing accommodations when we launch.'
+                  : 'Check back soon for amazing hostel listings!'
                 }
               </p>
+              {isFiltered && (
+                <button
+                  onClick={handleShowAll}
+                  className="mt-4 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-all duration-200"
+                >
+                  Show All Hostels
+                </button>
+              )}
             </div>
           )}
         </div>
       </section>
 
-      {/* Benefits Section */}
-      <section className="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-8">
+      {/* Features Section */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
               Why Choose HostelHub?
             </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Experience the best in hostel accommodation with our comprehensive platform.
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              We make finding and booking hostels simple, secure, and affordable
             </p>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white rounded-xl border border-gray-200 p-6 text-center">
-              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <Shield className="w-6 h-6 text-blue-600" />
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Shield className="w-8 h-8 text-blue-600" />
               </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">Secure & Verified</h3>
-              <p className="text-gray-600 text-sm">
-                All hostels are verified and bookings are secure with our trusted platform.
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Verified Hostels</h3>
+              <p className="text-gray-600">
+                All hostels are verified and meet our quality standards
               </p>
             </div>
-
-            <div className="bg-white rounded-xl border border-gray-200 p-6 text-center">
-              <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="w-6 h-6 text-green-600" />
+            
+            <div className="text-center">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="w-8 h-8 text-green-600" />
               </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">Best Value</h3>
-              <p className="text-gray-600 text-sm">
-                Find the best prices and value for money with our curated selection.
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Easy Booking</h3>
+              <p className="text-gray-600">
+                Simple and secure booking process with instant confirmation
               </p>
             </div>
-
-            <div className="bg-white rounded-xl border border-gray-200 p-6 text-center">
-              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <HeadphonesIcon className="w-6 h-6 text-purple-600" />
+            
+            <div className="text-center">
+              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <HeadphonesIcon className="w-8 h-8 text-purple-600" />
               </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">24/7 Support</h3>
-              <p className="text-gray-600 text-sm">
-                Get help anytime with our round-the-clock customer support team.
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">24/7 Support</h3>
+              <p className="text-gray-600">
+                Round-the-clock customer support for all your needs
               </p>
             </div>
           </div>
@@ -343,17 +201,20 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-3xl mx-auto text-center">
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200 p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              Ready to Find Your Perfect Hostel?
-            </h2>
-            <p className="text-gray-600 mb-6">
-              Join thousands of travelers who trust HostelHub for their accommodation needs.
-            </p>
-            <button className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 font-semibold">
-              Start Exploring
+      <section className="py-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            Ready to Find Your Perfect Hostel?
+          </h2>
+          <p className="text-lg text-gray-600 mb-8">
+            Join thousands of students and travelers who trust HostelHub for their accommodation needs
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button className="bg-blue-600 text-white py-3 px-8 rounded-lg hover:bg-blue-700 transition-all duration-200 font-medium">
+              Browse Hostels
+            </button>
+            <button className="border border-blue-600 text-blue-600 py-3 px-8 rounded-lg hover:bg-blue-50 transition-all duration-200 font-medium">
+              List Your Hostel
             </button>
           </div>
         </div>

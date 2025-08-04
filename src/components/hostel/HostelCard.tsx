@@ -18,6 +18,11 @@ interface HostelCardProps {
 
 // Helper function to get file URL
 const getFileUrl = (fileId: string) => {
+  // If it's already a full URL (like Unsplash), return it directly
+  if (fileId.startsWith('http')) {
+    return fileId;
+  }
+  // Otherwise, construct Appwrite URL
   return `https://fra.cloud.appwrite.io/v1/storage/buckets/${process.env.NEXT_PUBLIC_APPWRITE_BUCKET_HOSTEL_PHOTOS}/files/${fileId}/view?project=${process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID}`;
 };
 
@@ -41,6 +46,10 @@ export default function HostelCard({ hostel }: HostelCardProps) {
             src={getFileUrl(hostel.mainPhoto)}
             alt={hostel.hostelName}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+            onError={(e) => {
+              // Fallback to a placeholder image if the main image fails to load
+              e.currentTarget.src = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop';
+            }}
           />
           <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1">
             <span className="text-xs font-medium text-gray-700">
