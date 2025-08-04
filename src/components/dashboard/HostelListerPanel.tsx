@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Home as HomeIcon, 
   Building2, 
@@ -12,10 +12,15 @@ import {
   Sparkles,
   CheckCircle,
   Star,
-  MapPin
+  MapPin,
+  Edit,
+  Trash2,
+  Eye
 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Header from '@/components/layout/Header';
+import { HostelService } from '@/lib/hostel-service';
 
 interface HostelListerPanelProps {
   user: {
@@ -29,11 +34,14 @@ interface HostelListerPanelProps {
 export default function HostelListerPanel({ user, onSignOut }: HostelListerPanelProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [postedHostels, setPostedHostels] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: HomeIcon, color: 'blue' },
     { id: 'post-hostel', label: 'Post a Hostel', icon: Plus, color: 'green' },
-    { id: 'my-listings', label: 'My Listings', icon: Building2, color: 'purple' },
+    { id: 'posted-hostels', label: 'Posted Hostels', icon: Building2, color: 'purple' },
     { id: 'bookings', label: 'Bookings', icon: Users, color: 'pink' },
     { id: 'analytics', label: 'Analytics', icon: BarChart3, color: 'orange' },
     { id: 'settings', label: 'Settings', icon: Settings, color: 'gray' },
@@ -49,6 +57,41 @@ export default function HostelListerPanel({ user, onSignOut }: HostelListerPanel
       gray: 'bg-gray-100 text-gray-600',
     };
     return colors[color as keyof typeof colors] || 'bg-blue-100 text-blue-600';
+  };
+
+  const fetchPostedHostels = async () => {
+    if (!user?.userId) return;
+    
+    setLoading(true);
+    try {
+      const hostels = await HostelService.getHostelsByOwner(user.userId);
+      setPostedHostels(hostels);
+    } catch (error) {
+      console.error('Error fetching posted hostels:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'posted-hostels') {
+      fetchPostedHostels();
+    }
+  }, [activeTab, user?.userId]);
+
+  const handleDeleteHostel = async (hostelId: string) => {
+    if (!confirm('Are you sure you want to delete this hostel? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      await HostelService.deleteHostel(hostelId);
+      // Refresh the list after deletion
+      fetchPostedHostels();
+    } catch (error) {
+      console.error('Error deleting hostel:', error);
+      alert('Failed to delete hostel. Please try again.');
+    }
   };
 
   const renderContent = () => {
@@ -117,23 +160,103 @@ export default function HostelListerPanel({ user, onSignOut }: HostelListerPanel
           </div>
         );
       
-      case 'my-listings':
+      case 'posted-hostels':
         return (
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">My Hostel Listings</h2>
-            <p className="text-gray-600 mb-8">Manage your existing hostel listings and view their performance.</p>
-            
-            <div className="text-center py-12">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
-                <Building2 className="w-8 h-8 text-gray-400" />
+          <div className="space-y-6">
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">Posted Hostels</h2>
+                  <p className="text-gray-600">Manage your hostel listings and view their performance.</p>
+                </div>
+                <button 
+                  onClick={() => window.location.href = '/post-hostel'}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 font-semibold flex items-center space-x-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add New</span>
+                </button>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">No Listings Yet</h3>
-              <p className="text-gray-600 max-w-md mx-auto mb-6">
-                Start by creating your first hostel listing to attract travelers.
-              </p>
-              <button className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 font-semibold">
-                Create First Listing
-              </button>
+
+              {loading ? (
+                <div className="text-center py-12">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
+                    <Building2 className="w-8 h-8 text-blue-600 animate-pulse" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">Loading Your Hostels...</h3>
+                  <p className="text-gray-600">Fetching your posted hostels.</p>
+                </div>
+              ) : postedHostels.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {postedHostels.map((hostel) => (
+                    <div key={hostel.hostelId} className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-200">
+                      <div className="relative">
+                        <img
+                          src={HostelService.getFileUrl(hostel.mainPhoto)}
+                          alt={hostel.hostelName}
+                          className="w-full h-48 object-cover"
+                        />
+                        <div className="absolute top-3 right-3 flex space-x-2">
+                          <button
+                            onClick={() => router.push(`/hostels/${hostel.hostelId}`)}
+                            className="p-2 bg-white/90 backdrop-blur-sm rounded-lg hover:bg-white transition-all duration-200"
+                            title="View Details"
+                          >
+                            <Eye className="w-4 h-4 text-gray-700" />
+                          </button>
+                          <button
+                            onClick={() => router.push(`/hostels/${hostel.hostelId}?edit=true`)}
+                            className="p-2 bg-blue-500/90 backdrop-blur-sm rounded-lg hover:bg-blue-500 transition-all duration-200"
+                            title="Edit Hostel"
+                          >
+                            <Edit className="w-4 h-4 text-white" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteHostel(hostel.hostelId)}
+                            className="p-2 bg-red-500/90 backdrop-blur-sm rounded-lg hover:bg-red-500 transition-all duration-200"
+                            title="Delete Hostel"
+                          >
+                            <Trash2 className="w-4 h-4 text-white" />
+                          </button>
+                        </div>
+                      </div>
+                      
+                      <div className="p-4">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">{hostel.hostelName}</h3>
+                        <div className="flex items-center text-gray-600 mb-3">
+                          <MapPin className="w-4 h-4 mr-1" />
+                          <span className="text-sm">{hostel.city}, {hostel.area}</span>
+                        </div>
+                        
+                        <div className="flex items-center justify-between">
+                          <div className="text-sm text-gray-600">
+                            <span className="font-medium">Status:</span> {hostel.status}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            Posted {new Date(hostel.createdAt).toLocaleDateString()}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
+                    <Building2 className="w-8 h-8 text-gray-400" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-3">No Hostels Posted Yet</h3>
+                  <p className="text-gray-600 max-w-md mx-auto mb-6">
+                    Start by creating your first hostel listing to attract travelers and grow your business.
+                  </p>
+                  <button 
+                    onClick={() => window.location.href = '/post-hostel'}
+                    className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 font-semibold"
+                  >
+                    Create First Listing
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         );

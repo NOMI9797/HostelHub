@@ -155,7 +155,7 @@ export class HostelService {
       );
 
       return response.documents.map((doc: any) => ({
-        hostelId: doc.$id,
+        hostelId: doc.hostelId,
         hostelName: doc.hostelName,
         description: doc.description,
         city: doc.city,
@@ -197,12 +197,18 @@ export class HostelService {
   // Get hostel by ID
   static async getHostelById(hostelId: string): Promise<HostelResponse> {
     try {
-      const response = await databases.getDocument(
+      // First try to find by hostelId field
+      const response = await databases.listDocuments(
         DATABASE_ID,
         COLLECTION_HOSTELS,
-        hostelId
+        [Query.equal('hostelId', hostelId)]
       );
-      return response as unknown as HostelResponse;
+      
+      if (response.documents.length === 0) {
+        throw new Error('Hostel not found');
+      }
+      
+      return response.documents[0] as unknown as HostelResponse;
     } catch (error) {
       console.error('Error fetching hostel:', error);
       throw error;
@@ -212,6 +218,19 @@ export class HostelService {
   // Update hostel
   static async updateHostel(hostelId: string, updates: Partial<HostelData>): Promise<HostelResponse> {
     try {
+      // First find the document by hostelId
+      const findResponse = await databases.listDocuments(
+        DATABASE_ID,
+        COLLECTION_HOSTELS,
+        [Query.equal('hostelId', hostelId)]
+      );
+      
+      if (findResponse.documents.length === 0) {
+        throw new Error('Hostel not found');
+      }
+      
+      const documentId = findResponse.documents[0].$id;
+      
       const updateData: any = {
         ...updates,
         updatedAt: new Date().toISOString(),
@@ -228,7 +247,7 @@ export class HostelService {
       const response = await databases.updateDocument(
         DATABASE_ID,
         COLLECTION_HOSTELS,
-        hostelId,
+        documentId,
         updateData
       );
 
@@ -242,10 +261,23 @@ export class HostelService {
   // Delete hostel
   static async deleteHostel(hostelId: string): Promise<void> {
     try {
+      // First find the document by hostelId
+      const findResponse = await databases.listDocuments(
+        DATABASE_ID,
+        COLLECTION_HOSTELS,
+        [Query.equal('hostelId', hostelId)]
+      );
+      
+      if (findResponse.documents.length === 0) {
+        throw new Error('Hostel not found');
+      }
+      
+      const documentId = findResponse.documents[0].$id;
+      
       await databases.deleteDocument(
         DATABASE_ID,
         COLLECTION_HOSTELS,
-        hostelId
+        documentId
       );
     } catch (error) {
       console.error('Error deleting hostel:', error);

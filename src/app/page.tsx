@@ -20,10 +20,26 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchLocation, setSearchLocation] = useState('');
+  const [isFiltered, setIsFiltered] = useState(false);
 
   useEffect(() => {
     fetchHostels();
   }, []);
+
+  // Auto-search effect
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (searchQuery || searchLocation) {
+        handleSearch();
+        setIsFiltered(true);
+      } else if (isFiltered) {
+        fetchHostels();
+        setIsFiltered(false);
+      }
+    }, 500); // 500ms delay to avoid too many API calls
+
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery, searchLocation]);
 
   const fetchHostels = async () => {
     try {
@@ -47,6 +63,13 @@ export default function HomePage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleShowAll = () => {
+    setSearchQuery('');
+    setSearchLocation('');
+    setIsFiltered(false);
+    fetchHostels();
   };
 
   const handleUseMyLocation = () => {
@@ -106,10 +129,10 @@ export default function HomePage() {
                   />
                 </div>
                 <button
-                  onClick={handleSearch}
-                  className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 font-semibold"
+                  onClick={handleShowAll}
+                  className="w-full py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-all duration-200 font-semibold"
                 >
-                  Search Hostels
+                  Show All
                 </button>
               </div>
               <div className="flex justify-center">
@@ -147,10 +170,13 @@ export default function HomePage() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Featured Hostels
+              {isFiltered ? 'Search Results' : 'Featured Hostels'}
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Handpicked accommodations with the highest ratings and best value for money.
+              {isFiltered 
+                ? `Found ${hostels.length} hostel${hostels.length !== 1 ? 's' : ''} matching your search.`
+                : 'Handpicked accommodations with the highest ratings and best value for money.'
+              }
             </p>
           </div>
 
@@ -159,8 +185,12 @@ export default function HomePage() {
               <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
                 <Search className="w-8 h-8 text-blue-600 animate-pulse" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Loading Hostels...</h3>
-              <p className="text-gray-600">Finding the best accommodations for you.</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                {isFiltered ? 'Searching...' : 'Loading Hostels...'}
+              </h3>
+              <p className="text-gray-600">
+                {isFiltered ? 'Finding hostels matching your criteria.' : 'Finding the best accommodations for you.'}
+              </p>
             </div>
           ) : hostels.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -173,9 +203,14 @@ export default function HomePage() {
               <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
                 <Search className="w-8 h-8 text-gray-400" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Coming Soon</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                {isFiltered ? 'No Hostels Found' : 'Coming Soon'}
+              </h3>
               <p className="text-gray-600 max-w-md mx-auto">
-                We&apos;re currently curating the best hostels for you. Be the first to discover amazing accommodations when we launch.
+                {isFiltered 
+                  ? 'No hostels match your search criteria. Try adjusting your search terms or click "Show All" to see all available hostels.'
+                  : 'We\'re currently curating the best hostels for you. Be the first to discover amazing accommodations when we launch.'
+                }
               </p>
             </div>
           )}
