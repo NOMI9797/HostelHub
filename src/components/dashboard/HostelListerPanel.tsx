@@ -99,36 +99,19 @@ export default function HostelListerPanel({ user, onSignOut }: HostelListerPanel
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Post a New Hostel</h2>
             <p className="text-gray-600 mb-8">Create a new hostel listing to attract travelers and grow your business.</p>
             
-            <div className="space-y-6">
-              <div>
-                <label className="block text-gray-700 font-medium mb-2">Hostel Name</label>
-                <input 
-                  type="text" 
-                  className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter hostel name"
-                />
+            <div className="text-center py-12">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
+                <Plus className="w-8 h-8 text-blue-600" />
               </div>
-              
-              <div>
-                <label className="block text-gray-700 font-medium mb-2">Location</label>
-                <input 
-                  type="text" 
-                  className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter location"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-gray-700 font-medium mb-2">Description</label>
-                <textarea 
-                  className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  rows={4}
-                  placeholder="Describe your hostel..."
-                />
-              </div>
-              
-              <button className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 font-semibold">
-                Create Hostel Listing
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">Ready to Post Your Hostel?</h3>
+              <p className="text-gray-600 max-w-md mx-auto mb-6">
+                Fill out the comprehensive form to create your hostel listing with all the details travelers need.
+              </p>
+              <button 
+                onClick={() => window.location.href = '/post-hostel'}
+                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 font-semibold"
+              >
+                Start Posting
               </button>
             </div>
           </div>
@@ -283,9 +266,17 @@ export default function HostelListerPanel({ user, onSignOut }: HostelListerPanel
       <div className="lg:ml-64 pt-16">
         {/* Page Title */}
         <div className="p-4 border-b border-gray-200">
-          <h1 className="text-xl font-semibold text-gray-900">
-            {menuItems.find(item => item.id === activeTab)?.label}
-          </h1>
+          <div className="flex items-center justify-between">
+            <h1 className="text-xl font-semibold text-gray-900">
+              {menuItems.find(item => item.id === activeTab)?.label}
+            </h1>
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-all duration-300"
+            >
+              <Menu className="w-6 h-6 text-gray-700" />
+            </button>
+          </div>
         </div>
 
         {/* Page Content */}
