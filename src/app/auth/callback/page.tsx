@@ -87,49 +87,45 @@ export default function AuthCallback() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden flex items-center justify-center">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
-        <div className="absolute top-40 left-40 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
-      </div>
-
+    <div className="min-h-screen bg-white flex items-center justify-center px-4">
       {/* Content */}
-      <div className="relative bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-12 max-w-md w-full mx-4">
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 max-w-md w-full">
         <div className="text-center">
           {/* Logo */}
-          <div className="flex justify-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/25">
-              <HomeIcon className="w-8 h-8 text-white" />
+          <div className="flex justify-center mb-6">
+            <div className="relative">
+              <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center shadow-sm">
+                <HomeIcon className="w-6 h-6 text-white" />
+              </div>
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full"></div>
             </div>
           </div>
 
           {/* Status Icon */}
           <div className="mb-6">
             {status === 'loading' && (
-              <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+              <div className="w-12 h-12 border-3 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
             )}
             {status === 'success' && (
-              <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto">
-                <CheckCircle className="w-8 h-8 text-white" />
+              <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto">
+                <CheckCircle className="w-6 h-6 text-white" />
               </div>
             )}
             {status === 'error' && (
-              <div className="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center mx-auto">
-                <AlertCircle className="w-8 h-8 text-white" />
+              <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center mx-auto">
+                <AlertCircle className="w-6 h-6 text-white" />
               </div>
             )}
           </div>
 
           {/* Status Text */}
-          <h2 className="text-2xl font-bold text-white mb-4">
+          <h2 className="text-xl font-bold text-gray-900 mb-3">
             {status === 'loading' && 'Authenticating...'}
             {status === 'success' && 'Welcome to HostelHub!'}
             {status === 'error' && 'Authentication Failed'}
           </h2>
 
-          <p className="text-gray-300 leading-relaxed">
+          <p className="text-gray-600 leading-relaxed">
             {status === 'loading' && 'Please wait while we complete your authentication.'}
             {status === 'success' && message}
             {status === 'error' && message}
@@ -139,7 +135,7 @@ export default function AuthCallback() {
           {status === 'error' && (
             <button
               onClick={() => router.push('/auth')}
-              className="mt-6 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl hover:from-blue-600 hover:to-purple-700 transition-all duration-300 font-medium shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/40 transform hover:scale-105"
+              className="mt-6 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 font-medium shadow-sm"
             >
               Try Again
             </button>

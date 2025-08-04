@@ -228,6 +228,9 @@ export default function HostelListerPanel({ user, onSignOut }: HostelListerPanel
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Unified Header */}
+      <Header />
+
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
         <div 
@@ -237,31 +240,10 @@ export default function HostelListerPanel({ user, onSignOut }: HostelListerPanel
       )}
 
       {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 lg:translate-x-0 ${
+      <div className={`fixed top-16 left-0 bottom-0 z-30 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 lg:translate-x-0 ${
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
         <div className="flex flex-col h-full">
-          {/* Logo */}
-          <div className="p-6 border-b border-gray-200">
-            <Link href="/" className="flex items-center space-x-3">
-              <div className="relative">
-                <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-sm">
-                  <HomeIcon className="w-6 h-6 text-white" />
-                </div>
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full"></div>
-              </div>
-              <div>
-                <span className="text-xl font-bold text-gray-900">
-                  HostelHub
-                </span>
-                <div className="flex items-center space-x-1">
-                  <CheckCircle className="w-3 h-3 text-green-600" />
-                  <span className="text-xs text-gray-600 font-medium">Admin Panel</span>
-                </div>
-              </div>
-            </Link>
-          </div>
-
           {/* Navigation */}
           <nav className="flex-1 p-6 space-y-2">
             {menuItems.map((item) => (
@@ -298,24 +280,13 @@ export default function HostelListerPanel({ user, onSignOut }: HostelListerPanel
       </div>
 
       {/* Main Content */}
-      <div className="lg:ml-64">
-        {/* Header */}
-        <header className="relative bg-white border-b border-gray-200">
-          <div className="flex items-center justify-between p-4">
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={() => setSidebarOpen(true)}
-                className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-all duration-200"
-              >
-                <Menu className="w-6 h-6 text-gray-700" />
-              </button>
-              
-              <h1 className="text-xl font-semibold text-gray-900">
-                {menuItems.find(item => item.id === activeTab)?.label}
-              </h1>
-            </div>
-          </div>
-        </header>
+      <div className="lg:ml-64 pt-16">
+        {/* Page Title */}
+        <div className="p-4 border-b border-gray-200">
+          <h1 className="text-xl font-semibold text-gray-900">
+            {menuItems.find(item => item.id === activeTab)?.label}
+          </h1>
+        </div>
 
         {/* Page Content */}
         <main className="p-6">

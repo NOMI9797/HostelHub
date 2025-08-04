@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { UserRole } from '@/lib/appwrite';
-import { Home as HomeIcon, Building2, Users, ArrowLeft, Sparkles } from 'lucide-react';
+import { Home as HomeIcon, Building2, Users, ArrowLeft, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AuthPage() {
@@ -29,29 +29,31 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
-        <div className="absolute top-40 left-40 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
-      </div>
-
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="relative bg-white/10 backdrop-blur-xl border-b border-white/20">
+      <header className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
-            <Link href="/" className="flex items-center space-x-3 hover:scale-105 transition-transform duration-300">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/25">
-                <HomeIcon className="w-6 h-6 text-white" />
+          <div className="flex justify-between items-center h-16">
+            <Link href="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity duration-200">
+              <div className="relative">
+                <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-sm">
+                  <HomeIcon className="w-6 h-6 text-white" />
+                </div>
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full"></div>
               </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
-                HostelHub
-              </span>
+              <div>
+                <span className="text-xl font-bold text-gray-900">
+                  HostelHub
+                </span>
+                <div className="flex items-center space-x-1">
+                  <CheckCircle className="w-3 h-3 text-green-600" />
+                  <span className="text-xs text-gray-600 font-medium">Next-Gen Hostel Discovery</span>
+                </div>
+              </div>
             </Link>
             <Link 
               href="/" 
-              className="flex items-center space-x-2 text-gray-300 hover:text-white transition-all duration-300 hover:scale-105"
+              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors duration-200"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Back to Home</span>
@@ -61,25 +63,25 @@ export default function AuthPage() {
       </header>
 
       {/* Main Content */}
-      <div className="relative flex items-center justify-center min-h-[calc(100vh-80px)] px-4 sm:px-6 lg:px-8">
+      <div className="flex items-center justify-center min-h-[calc(100vh-64px)] px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 border border-white/20 mb-6">
-              <Sparkles className="w-4 h-4 text-yellow-400" />
-              <span className="text-sm text-gray-300">Join HostelHub</span>
+            <div className="inline-flex items-center space-x-2 bg-blue-50 rounded-full px-4 py-2 border border-blue-200 mb-6">
+              <CheckCircle className="w-4 h-4 text-blue-600" />
+              <span className="text-sm text-blue-700 font-medium">Join HostelHub</span>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               Welcome to HostelHub
             </h1>
-            <p className="text-gray-300 leading-relaxed">
+            <p className="text-gray-600 leading-relaxed">
               Choose your role and start your journey with secure Google authentication
             </p>
           </div>
 
           {/* Role Selection */}
-          <div className="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 mb-8">
-            <h2 className="text-xl font-semibold text-white mb-6 text-center">
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-6 text-center">
               Select Your Role
             </h2>
             
@@ -87,23 +89,25 @@ export default function AuthPage() {
               {/* Hostel Lister Option */}
               <button
                 onClick={() => setSelectedRole(UserRole.HOSTEL_LISTER)}
-                className={`w-full p-6 rounded-2xl border-2 transition-all duration-300 hover:scale-105 ${
+                className={`w-full p-4 rounded-lg border-2 transition-all duration-200 ${
                   selectedRole === UserRole.HOSTEL_LISTER
-                    ? 'border-blue-500 bg-blue-500/20'
-                    : 'border-white/20 bg-white/5 hover:border-blue-500/50'
+                    ? 'border-blue-500 bg-blue-50'
+                    : 'border-gray-200 bg-white hover:border-blue-300 hover:bg-gray-50'
                 }`}
               >
                 <div className="flex items-center space-x-4">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
                     selectedRole === UserRole.HOSTEL_LISTER
-                      ? 'bg-blue-500'
-                      : 'bg-white/10'
+                      ? 'bg-blue-600'
+                      : 'bg-gray-100'
                   }`}>
-                    <Building2 className="w-6 h-6 text-white" />
+                    <Building2 className={`w-5 h-5 ${
+                      selectedRole === UserRole.HOSTEL_LISTER ? 'text-white' : 'text-gray-600'
+                    }`} />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-lg font-semibold text-white">Hostel Lister</h3>
-                    <p className="text-gray-300 text-sm">
+                    <h3 className="text-base font-semibold text-gray-900">Hostel Lister</h3>
+                    <p className="text-gray-600 text-sm">
                       Post, manage, and edit hostel listings
                     </p>
                   </div>
@@ -113,23 +117,25 @@ export default function AuthPage() {
               {/* Room Seeker Option */}
               <button
                 onClick={() => setSelectedRole(UserRole.ROOM_SEEKER)}
-                className={`w-full p-6 rounded-2xl border-2 transition-all duration-300 hover:scale-105 ${
+                className={`w-full p-4 rounded-lg border-2 transition-all duration-200 ${
                   selectedRole === UserRole.ROOM_SEEKER
-                    ? 'border-purple-500 bg-purple-500/20'
-                    : 'border-white/20 bg-white/5 hover:border-purple-500/50'
+                    ? 'border-purple-500 bg-purple-50'
+                    : 'border-gray-200 bg-white hover:border-purple-300 hover:bg-gray-50'
                 }`}
               >
                 <div className="flex items-center space-x-4">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
                     selectedRole === UserRole.ROOM_SEEKER
-                      ? 'bg-purple-500'
-                      : 'bg-white/10'
+                      ? 'bg-purple-600'
+                      : 'bg-gray-100'
                   }`}>
-                    <Users className="w-6 h-6 text-white" />
+                    <Users className={`w-5 h-5 ${
+                      selectedRole === UserRole.ROOM_SEEKER ? 'text-white' : 'text-gray-600'
+                    }`} />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-lg font-semibold text-white">Room Seeker</h3>
-                    <p className="text-gray-300 text-sm">
+                    <h3 className="text-base font-semibold text-gray-900">Room Seeker</h3>
+                    <p className="text-gray-600 text-sm">
                       Browse, search, and save hostel listings
                     </p>
                   </div>
@@ -142,10 +148,10 @@ export default function AuthPage() {
           <button
             onClick={handleSignUp}
             disabled={!selectedRole || isLoading}
-            className={`w-full py-4 px-6 rounded-2xl font-medium transition-all duration-300 transform ${
+            className={`w-full py-3 px-6 rounded-lg font-medium transition-all duration-200 ${
               selectedRole && !isLoading
-                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 hover:scale-105 shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/40'
-                : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-sm'
+                : 'bg-gray-200 text-gray-500 cursor-not-allowed'
             }`}
           >
             {isLoading ? (
@@ -167,13 +173,13 @@ export default function AuthPage() {
           </button>
 
           {/* Terms */}
-          <p className="text-center text-gray-400 text-sm mt-6">
+          <p className="text-center text-gray-500 text-sm mt-6">
             By signing up, you agree to our{' '}
-            <a href="#" className="text-blue-400 hover:text-blue-300 transition-colors">
+            <a href="#" className="text-blue-600 hover:text-blue-700 transition-colors">
               Terms of Service
             </a>{' '}
             and{' '}
-            <a href="#" className="text-blue-400 hover:text-blue-300 transition-colors">
+            <a href="#" className="text-blue-600 hover:text-blue-700 transition-colors">
               Privacy Policy
             </a>
           </p>
