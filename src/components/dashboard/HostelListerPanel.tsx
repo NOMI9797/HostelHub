@@ -20,7 +20,7 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/layout/Header';
-import { HostelService } from '@/lib/hostel-service';
+import { HostelService, HostelResponse } from '@/lib/hostel-service';
 
 interface HostelListerPanelProps {
   user: {
@@ -34,7 +34,7 @@ interface HostelListerPanelProps {
 export default function HostelListerPanel({ user, onSignOut }: HostelListerPanelProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [postedHostels, setPostedHostels] = useState<any[]>([]);
+  const [postedHostels, setPostedHostels] = useState<HostelResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 

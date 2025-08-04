@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import { 
   MapPin, 
@@ -20,7 +20,9 @@ import {
   Edit,
   Trash2,
   Save,
-  X
+  X,
+  Plus,
+  Upload
 } from 'lucide-react';
 import Link from 'next/link';
 import Header from '@/components/layout/Header';
@@ -51,9 +53,23 @@ interface HostelDataFromDB {
   updatedAt?: string;
 }
 
+interface EditFormData {
+  hostelName: string;
+  description: string;
+  city: string;
+  area: string;
+  nearbyLandmark: string;
+  ownerName: string;
+  ownerPhone: string;
+  genderSpecific: 'boys' | 'girls' | 'co-ed';
+  roomTypes: Array<{type: string; available: boolean; price: number}>;
+  facilities: string[];
+  galleryImages: string[];
+}
+
 // Helper function to get file URL
 const getFileUrl = (fileId: string) => {
-  return `https://fra.cloud.appwrite.io/v1/storage/buckets/${process.env.NEXT_PUBLIC_APPWRITE_BUCKET_HOSTEL_PHOTOS}/files/${fileId}/view?project=${process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID}`;
+  return HostelService.getFileUrl(fileId);
 };
 
 // Facility icons mapping
@@ -85,8 +101,11 @@ export default function HostelDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
-  const [editForm, setEditForm] = useState<any>(null);
+  const [editForm, setEditForm] = useState<EditFormData | null>(null);
   const [saving, setSaving] = useState(false);
+  const [uploadingImages, setUploadingImages] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string>(hostel?.mainPhoto || '');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchHostelDetails = useCallback(async () => {
     try {
@@ -111,6 +130,13 @@ export default function HostelDetailPage() {
     }
   }, [hostelId, fetchHostelDetails]);
 
+  // Update selected image when hostel data loads
+  useEffect(() => {
+    if (hostel) {
+      setSelectedImage(hostel.mainPhoto);
+    }
+  }, [hostel]);
+
   // Check if edit mode should be enabled (for form initialization only)
   useEffect(() => {
     const editMode = searchParams.get('edit') === 'true';
@@ -125,9 +151,10 @@ export default function HostelDetailPage() {
         nearbyLandmark: hostel.nearbyLandmark || '',
         ownerName: hostel.ownerName,
         ownerPhone: hostel.ownerPhone,
-        genderSpecific: hostel.genderSpecific,
+        genderSpecific: hostel.genderSpecific as 'boys' | 'girls' | 'co-ed',
         roomTypes: JSON.parse(hostel.roomTypes),
         facilities: JSON.parse(hostel.facilities),
+        galleryImages: JSON.parse(hostel.galleryImages),
       });
     }
   }, [searchParams, hostel, editForm]);
@@ -136,16 +163,7 @@ export default function HostelDetailPage() {
   const isOwner = user?.userId === hostel?.ownerId;
   const isFromDashboard = searchParams.get('edit') === 'true';
   
-  // Debug logging
-  console.log('Debug values:', {
-    isOwner,
-    isFromDashboard,
-    isEditing,
-    hasEditForm: !!editForm,
-    userUserId: user?.userId,
-    hostelOwnerId: hostel?.ownerId,
-    searchParamsEdit: searchParams.get('edit')
-  });
+
 
   const handleEdit = () => {
     if (!hostel) return;
@@ -158,9 +176,10 @@ export default function HostelDetailPage() {
       nearbyLandmark: hostel.nearbyLandmark || '',
       ownerName: hostel.ownerName,
       ownerPhone: hostel.ownerPhone,
-      genderSpecific: hostel.genderSpecific,
+              genderSpecific: hostel.genderSpecific as 'boys' | 'girls' | 'co-ed',
       roomTypes: JSON.parse(hostel.roomTypes),
       facilities: JSON.parse(hostel.facilities),
+      galleryImages: JSON.parse(hostel.galleryImages),
     });
     setIsEditing(true);
   };
@@ -225,6 +244,71 @@ export default function HostelDetailPage() {
     }
   };
 
+  const handleGalleryImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+
+    setUploadingImages(true);
+    try {
+      const uploadPromises = Array.from(files).map(file => 
+        HostelService.uploadHostelPhoto(file)
+      );
+      const newImageIds = await Promise.all(uploadPromises);
+      
+      setEditForm((prev: any) => ({
+        ...prev,
+        galleryImages: [...(prev.galleryImages || []), ...newImageIds]
+      }));
+    } catch (error) {
+      console.error('Error uploading images:', error);
+      alert('Failed to upload images. Please try again.');
+    } finally {
+      setUploadingImages(false);
+    }
+  };
+
+  const handleRemoveGalleryImage = (index: number) => {
+    setEditForm((prev: any) => ({
+      ...prev,
+      galleryImages: prev.galleryImages.filter((_: any, i: number) => i !== index)
+    }));
+  };
+
+  const handleRoomTypeChange = (index: number, field: string, value: string | number | boolean) => {
+          setEditForm((prev: EditFormData | null) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          roomTypes: prev.roomTypes.map((rt, i: number) => 
+            i === index ? { ...rt, [field]: value } : rt
+          )
+        };
+      });
+  };
+
+  const handleAddRoomType = () => {
+    setEditForm((prev: any) => ({
+      ...prev,
+      roomTypes: [...prev.roomTypes, { type: '', available: true, price: 0 }]
+    }));
+  };
+
+  const handleRemoveRoomType = (index: number) => {
+    setEditForm((prev: any) => ({
+      ...prev,
+      roomTypes: prev.roomTypes.filter((_: any, i: number) => i !== index)
+    }));
+  };
+
+  const handleFacilityToggle = (facility: string) => {
+    setEditForm((prev: any) => ({
+      ...prev,
+      facilities: prev.facilities.includes(facility)
+        ? prev.facilities.filter((f: string) => f !== facility)
+        : [...prev.facilities, facility]
+    }));
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-white">
@@ -274,6 +358,8 @@ export default function HostelDetailPage() {
   const roomTypes = (hostel.roomTypes ? JSON.parse(hostel.roomTypes) : []) as Array<{type: string; available: boolean; price: number}>;
   const facilities = (hostel.facilities ? JSON.parse(hostel.facilities) : []) as string[];
   const galleryImages = (hostel.galleryImages ? JSON.parse(hostel.galleryImages) : []) as string[];
+  
+
 
   return (
     <div className="min-h-screen bg-white">
@@ -293,15 +379,19 @@ export default function HostelDetailPage() {
           </div>
 
           {/* Main Content */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className={`grid grid-cols-1 ${isEditing ? 'lg:grid-cols-1' : 'lg:grid-cols-3'} gap-8`}>
             {/* Left Column - Images and Details */}
-            <div className="lg:col-span-2 space-y-6">
+            <div className={`${isEditing ? 'lg:col-span-1' : 'lg:col-span-2'} space-y-6`}>
               {/* Main Image */}
               <div className="relative">
                 <img
-                  src={getFileUrl(hostel.mainPhoto)}
+                  src={getFileUrl(selectedImage)}
                   alt={hostel.hostelName}
-                  className="w-full h-96 object-cover rounded-xl"
+                  className="w-full h-96 object-cover rounded-xl cursor-pointer transition-transform hover:scale-105"
+                  onError={(e) => {
+                    console.error('Main image failed to load:', selectedImage);
+                    e.currentTarget.style.display = 'none';
+                  }}
                 />
                 <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1">
                   <span className="text-sm font-medium text-gray-700">
@@ -314,15 +404,53 @@ export default function HostelDetailPage() {
               {/* Gallery Images */}
               {galleryImages.length > 0 && (
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Gallery</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Gallery ({galleryImages.length + 1} images)</h3>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {galleryImages.map((imageId: string, index: number) => (
+                    {/* Main Image Thumbnail */}
+                    <div 
+                      className={`relative cursor-pointer group transition-all duration-200 ${
+                        selectedImage === hostel.mainPhoto ? 'ring-2 ring-blue-500' : 'hover:ring-2 hover:ring-gray-300'
+                      }`}
+                      onClick={() => setSelectedImage(hostel.mainPhoto)}
+                    >
                       <img
-                        key={index}
-                        src={getFileUrl(imageId)}
-                        alt={`Gallery ${index + 1}`}
+                        src={getFileUrl(hostel.mainPhoto)}
+                        alt="Main Photo"
                         className="w-full h-24 object-cover rounded-lg"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                        }}
                       />
+                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 rounded-lg flex items-center justify-center">
+                        <span className="text-white text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                          Main Photo
+                        </span>
+                      </div>
+                    </div>
+                    
+                    {/* Gallery Images */}
+                    {galleryImages.map((imageId: string, index: number) => (
+                      <div 
+                        key={index}
+                        className={`relative cursor-pointer group transition-all duration-200 ${
+                          selectedImage === imageId ? 'ring-2 ring-blue-500' : 'hover:ring-2 hover:ring-gray-300'
+                        }`}
+                        onClick={() => setSelectedImage(imageId)}
+                      >
+                        <img
+                          src={getFileUrl(imageId)}
+                          alt={`Gallery ${index + 1}`}
+                          className="w-full h-24 object-cover rounded-lg"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 rounded-lg flex items-center justify-center">
+                          <span className="text-white text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                            View
+                          </span>
+                        </div>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -463,109 +591,8 @@ export default function HostelDetailPage() {
                 </button>
               </div>
 
-              {/* Edit Form */}
-              {isEditing && editForm && (
-                <div className="bg-gray-50 rounded-xl border border-gray-200 p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center space-x-2">
-                    <Edit className="w-5 h-5 text-blue-600" />
-                    <span>Edit Hostel Details</span>
-                  </h3>
-                  
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Hostel Name</label>
-                      <input
-                        type="text"
-                        value={editForm.hostelName}
-                        onChange={(e) => setEditForm({...editForm, hostelName: e.target.value})}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
-                        placeholder="Enter hostel name"
-                      />
-                    </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                      <textarea
-                        value={editForm.description}
-                        onChange={(e) => setEditForm({...editForm, description: e.target.value})}
-                        rows={3}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white resize-none"
-                        placeholder="Describe your hostel"
-                      />
-                    </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">City</label>
-                        <input
-                          type="text"
-                          value={editForm.city}
-                          onChange={(e) => setEditForm({...editForm, city: e.target.value})}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
-                          placeholder="Enter city"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Area</label>
-                        <input
-                          type="text"
-                          value={editForm.area}
-                          onChange={(e) => setEditForm({...editForm, area: e.target.value})}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
-                          placeholder="Enter area"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Nearby Landmark</label>
-                      <input
-                        type="text"
-                        value={editForm.nearbyLandmark}
-                        onChange={(e) => setEditForm({...editForm, nearbyLandmark: e.target.value})}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
-                        placeholder="Enter nearby landmark"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Owner Name</label>
-                        <input
-                          type="text"
-                          value={editForm.ownerName}
-                          onChange={(e) => setEditForm({...editForm, ownerName: e.target.value})}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
-                          placeholder="Enter owner name"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Owner Phone</label>
-                        <input
-                          type="text"
-                          value={editForm.ownerPhone}
-                          onChange={(e) => setEditForm({...editForm, ownerPhone: e.target.value})}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
-                          placeholder="Enter phone number"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Gender Specific</label>
-                      <select
-                        value={editForm.genderSpecific}
-                        onChange={(e) => setEditForm({...editForm, genderSpecific: e.target.value})}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
-                      >
-                        <option value="boys">Boys</option>
-                        <option value="girls">Girls</option>
-                        <option value="co-ed">Co-ed</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-              )}
 
               {/* Owner Contact Card */}
               <div className="bg-white rounded-xl border border-gray-200 p-6">
@@ -631,6 +658,283 @@ export default function HostelDetailPage() {
               </div>
             </div>
           </div>
+
+          {/* Edit Form - Full Width (Outside Grid) */}
+          {isEditing && editForm && (
+            <div className="mt-8">
+              <div className="bg-white rounded-xl border border-gray-200 p-8 shadow-lg w-full">
+                <div className="flex items-center space-x-3 mb-8">
+                  <Edit className="w-6 h-6 text-blue-600" />
+                  <h3 className="text-2xl font-bold text-gray-900">Edit Hostel Details</h3>
+                </div>
+                
+                <div className="space-y-8">
+                  {/* Basic Information Section */}
+                  <div className="bg-gray-50 rounded-lg p-6">
+                    <h4 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                      <span className="w-2 h-2 bg-blue-600 rounded-full mr-3"></span>
+                      Basic Information
+                    </h4>
+                    <div className="space-y-6">
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-3">Hostel Name</label>
+                        <input
+                          type="text"
+                          value={editForm.hostelName}
+                          onChange={(e) => setEditForm({...editForm, hostelName: e.target.value})}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 placeholder-gray-500 text-base"
+                          placeholder="Enter hostel name"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-3">Description</label>
+                        <textarea
+                          value={editForm.description}
+                          onChange={(e) => setEditForm({...editForm, description: e.target.value})}
+                          rows={4}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white resize-none text-gray-900 placeholder-gray-500 text-base"
+                          placeholder="Describe your hostel"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-3">Gender Specific</label>
+                        <select
+                          value={editForm.genderSpecific}
+                          onChange={(e) => setEditForm({...editForm, genderSpecific: e.target.value as 'boys' | 'girls' | 'co-ed'})}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900"
+                        >
+                          <option value="boys">Boys</option>
+                          <option value="girls">Girls</option>
+                          <option value="co-ed">Co-ed</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Location Information Section */}
+                  <div className="bg-gray-50 rounded-lg p-6">
+                    <h4 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                      <span className="w-2 h-2 bg-green-600 rounded-full mr-3"></span>
+                      Location Information
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-3">City</label>
+                        <input
+                          type="text"
+                          value={editForm.city}
+                          onChange={(e) => setEditForm({...editForm, city: e.target.value})}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 placeholder-gray-500 text-base"
+                          placeholder="Enter city"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-3">Area</label>
+                        <input
+                          type="text"
+                          value={editForm.area}
+                          onChange={(e) => setEditForm({...editForm, area: e.target.value})}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 placeholder-gray-500 text-base"
+                          placeholder="Enter area"
+                        />
+                      </div>
+                      <div className="md:col-span-2 lg:col-span-1">
+                        <label className="block text-sm font-semibold text-gray-700 mb-3">Nearby Landmark</label>
+                        <input
+                          type="text"
+                          value={editForm.nearbyLandmark}
+                          onChange={(e) => setEditForm({...editForm, nearbyLandmark: e.target.value})}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 placeholder-gray-500 text-base"
+                          placeholder="Enter nearby landmark"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Contact Information Section */}
+                  <div className="bg-gray-50 rounded-lg p-6">
+                    <h4 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                      <span className="w-2 h-2 bg-purple-600 rounded-full mr-3"></span>
+                      Contact Information
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-3">Owner Name</label>
+                        <input
+                          type="text"
+                          value={editForm.ownerName}
+                          onChange={(e) => setEditForm({...editForm, ownerName: e.target.value})}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 placeholder-gray-500 text-base"
+                          placeholder="Enter owner name"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-3">Owner Phone</label>
+                        <input
+                          type="text"
+                          value={editForm.ownerPhone}
+                          onChange={(e) => setEditForm({...editForm, ownerPhone: e.target.value})}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 placeholder-gray-500 text-base"
+                          placeholder="Enter phone number"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Gallery Images Section */}
+                  <div className="bg-gray-50 rounded-lg p-6">
+                    <h4 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                      <span className="w-2 h-2 bg-orange-600 rounded-full mr-3"></span>
+                      Gallery Images
+                    </h4>
+                    <div className="space-y-6">
+                      {/* Current Images */}
+                      {editForm.galleryImages && editForm.galleryImages.length > 0 && (
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                          {editForm.galleryImages.map((imageId: string, index: number) => (
+                            <div key={index} className="relative group">
+                              <img
+                                src={getFileUrl(imageId)}
+                                alt={`Gallery ${index + 1}`}
+                                className="w-full h-24 object-cover rounded-lg shadow-sm"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveGalleryImage(index)}
+                                className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      
+                      {/* Upload New Images */}
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center bg-white">
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          multiple
+                          accept="image/*"
+                          onChange={handleGalleryImageUpload}
+                          className="hidden"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => fileInputRef.current?.click()}
+                          disabled={uploadingImages}
+                          className="flex items-center justify-center space-x-3 text-gray-600 hover:text-gray-800 transition-colors"
+                        >
+                          <Upload className="w-6 h-6" />
+                          <span className="font-medium">{uploadingImages ? 'Uploading...' : 'Add Gallery Images'}</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Room Types Section */}
+                  <div className="bg-gray-50 rounded-lg p-6">
+                    <div className="flex items-center justify-between mb-6">
+                      <h4 className="text-xl font-semibold text-gray-900 flex items-center">
+                        <span className="w-2 h-2 bg-indigo-600 rounded-full mr-3"></span>
+                        Room Types & Pricing
+                      </h4>
+                      <button
+                        type="button"
+                        onClick={handleAddRoomType}
+                        className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium flex items-center space-x-2 shadow-sm"
+                      >
+                        <Plus className="w-5 h-5" />
+                        <span>Add Room</span>
+                      </button>
+                    </div>
+                    <div className="space-y-5">
+                      {editForm.roomTypes && editForm.roomTypes.map((roomType: {type: string; available: boolean; price: number}, index: number) => (
+                        <div key={index} className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+                            <div className="md:col-span-2 lg:col-span-2">
+                              <label className="block text-sm font-semibold text-gray-700 mb-3">Room Type</label>
+                              <input
+                                type="text"
+                                value={roomType.type}
+                                onChange={(e) => handleRoomTypeChange(index, 'type', e.target.value)}
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500 text-base"
+                                placeholder="e.g., Single Room, Double Room, etc."
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-semibold text-gray-700 mb-3">Price (PKR)</label>
+                              <input
+                                type="number"
+                                value={roomType.price}
+                                onChange={(e) => handleRoomTypeChange(index, 'price', Number(e.target.value))}
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500 text-base"
+                                placeholder="0"
+                              />
+                            </div>
+                            <div className="flex items-end space-x-4">
+                              <label className="flex items-center space-x-3">
+                                <input
+                                  type="checkbox"
+                                  checked={roomType.available}
+                                  onChange={(e) => handleRoomTypeChange(index, 'available', e.target.checked)}
+                                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 w-5 h-5"
+                                />
+                                <span className="text-sm font-semibold text-gray-700">Available</span>
+                              </label>
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveRoomType(index)}
+                                className="px-4 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm font-medium"
+                              >
+                                Remove
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Facilities Section */}
+                  <div className="bg-gray-50 rounded-lg p-6">
+                    <h4 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                      <span className="w-2 h-2 bg-teal-600 rounded-full mr-3"></span>
+                      Facilities
+                    </h4>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+                      {Object.keys(FACILITY_ICONS).map((facility) => {
+                        const Icon = FACILITY_ICONS[facility];
+                        const isSelected = editForm.facilities.includes(facility);
+                        return (
+                          <button
+                            key={facility}
+                            type="button"
+                            onClick={() => handleFacilityToggle(facility)}
+                            className={`p-4 rounded-lg border-2 transition-all duration-200 hover:shadow-md ${
+                              isSelected
+                                ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-md'
+                                : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+                            }`}
+                          >
+                            <div className="flex flex-col items-center space-y-3">
+                              <Icon className={`w-6 h-6 ${isSelected ? 'text-blue-600' : 'text-gray-500'}`} />
+                              <span className="text-sm font-medium text-center">
+                                {facility.replace(/([A-Z])/g, ' $1').trim()}
+                              </span>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

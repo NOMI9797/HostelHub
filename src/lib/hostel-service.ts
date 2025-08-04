@@ -231,7 +231,7 @@ export class HostelService {
       
       const documentId = findResponse.documents[0].$id;
       
-      const updateData: any = {
+      const updateData: Record<string, unknown> = {
         ...updates,
         updatedAt: new Date().toISOString(),
       };
@@ -325,9 +325,9 @@ export class HostelService {
       
       if (query || location) {
         filteredResults = response.documents.filter((doc: any) => {
-          const hostelName = doc.hostelName?.toLowerCase() || '';
-          const city = doc.city?.toLowerCase() || '';
-          const area = doc.area?.toLowerCase() || '';
+          const hostelName = (doc.hostelName as string)?.toLowerCase() || '';
+          const city = (doc.city as string)?.toLowerCase() || '';
+          const area = (doc.area as string)?.toLowerCase() || '';
           const searchQuery = query.toLowerCase();
           const searchLocation = location?.toLowerCase() || '';
           
