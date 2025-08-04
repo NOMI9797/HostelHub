@@ -66,7 +66,7 @@ export default function HostelCard({ hostel }: HostelCardProps) {
           </div>
 
           {/* Price and Facilities */}
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
             <div className="flex items-center space-x-2">
               <span className="text-lg font-bold text-blue-600">
                 PKR {lowestPrice.toLocaleString()}

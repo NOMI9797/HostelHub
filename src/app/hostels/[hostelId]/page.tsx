@@ -82,7 +82,7 @@ export default function HostelDetailPage() {
       setLoading(true);
       const hostelData = await HostelService.getHostelById(hostelId);
       if (hostelData) {
-        setHostel(hostelData);
+        setHostel(hostelData as unknown as HostelDataFromDB);
       } else {
         setError('Hostel not found');
       }
@@ -242,7 +242,7 @@ export default function HostelDetailPage() {
               {/* Facilities */}
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Facilities</h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                   {facilities.map((facility: string) => {
                     const IconComponent = FACILITY_ICONS[facility] || Building2;
                     return (

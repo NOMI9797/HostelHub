@@ -50,9 +50,55 @@ export interface HostelData {
   updatedAt?: string;
 }
 
+export interface HostelResponse {
+  $id: string;
+  $createdAt: string;
+  $updatedAt: string;
+  hostelId: string;
+  ownerId: string;
+  ownerEmail: string;
+  hostelName: string;
+  description: string;
+  location: string;
+  city: string;
+  area: string;
+  nearbyLandmark: string;
+  googleMapsLocation: string;
+  mainPhoto: string;
+  galleryImages: string;
+  ownerName: string;
+  ownerPhone: string;
+  roomTypes: string;
+  facilities: string;
+  genderSpecific: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface HostelListItem {
+  hostelId: string;
+  hostelName: string;
+  description: string;
+  city: string;
+  area: string;
+  nearbyLandmark: string;
+  mainPhoto: string;
+  galleryImages: string;
+  ownerName: string;
+  ownerPhone: string;
+  ownerEmail: string;
+  roomTypes: string;
+  facilities: string;
+  genderSpecific: string;
+  ownerId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export class HostelService {
   // Create a new hostel listing
-  static async createHostel(hostelData: HostelData): Promise<any> {
+  static async createHostel(hostelData: HostelData): Promise<HostelResponse> {
     try {
       // Ensure galleryImages is properly handled
       const galleryImagesString = hostelData.galleryImages && hostelData.galleryImages.length > 0 
@@ -93,7 +139,7 @@ export class HostelService {
         documentData
       );
 
-      return response;
+      return response as unknown as HostelResponse;
     } catch (error) {
       console.error('Error creating hostel:', error);
       throw error;
@@ -101,7 +147,7 @@ export class HostelService {
   }
 
   // Get all hostels
-  static async getAllHostels(): Promise<any[]> {
+  static async getAllHostels(): Promise<HostelListItem[]> {
     try {
       const response = await databases.listDocuments(
         DATABASE_ID,
@@ -134,14 +180,14 @@ export class HostelService {
   }
 
   // Get hostels by owner
-  static async getHostelsByOwner(ownerId: string): Promise<any[]> {
+  static async getHostelsByOwner(ownerId: string): Promise<HostelResponse[]> {
     try {
       const response = await databases.listDocuments(
         DATABASE_ID,
         COLLECTION_HOSTELS,
         [Query.equal('ownerId', ownerId)]
       );
-      return response.documents;
+      return response.documents as unknown as HostelResponse[];
     } catch (error) {
       console.error('Error fetching owner hostels:', error);
       throw error;
@@ -149,14 +195,14 @@ export class HostelService {
   }
 
   // Get hostel by ID
-  static async getHostelById(hostelId: string): Promise<any> {
+  static async getHostelById(hostelId: string): Promise<HostelResponse> {
     try {
       const response = await databases.getDocument(
         DATABASE_ID,
         COLLECTION_HOSTELS,
         hostelId
       );
-      return response;
+      return response as unknown as HostelResponse;
     } catch (error) {
       console.error('Error fetching hostel:', error);
       throw error;
@@ -164,7 +210,7 @@ export class HostelService {
   }
 
   // Update hostel
-  static async updateHostel(hostelId: string, updates: Partial<HostelData>): Promise<any> {
+  static async updateHostel(hostelId: string, updates: Partial<HostelData>): Promise<HostelResponse> {
     try {
       const updateData: any = {
         ...updates,
@@ -186,7 +232,7 @@ export class HostelService {
         updateData
       );
 
-      return response;
+      return response as unknown as HostelResponse;
     } catch (error) {
       console.error('Error updating hostel:', error);
       throw error;
@@ -235,7 +281,7 @@ export class HostelService {
   }
 
   // Search hostels
-  static async searchHostels(query: string, location?: string): Promise<any[]> {
+  static async searchHostels(query: string, location?: string): Promise<HostelListItem[]> {
     try {
       const response = await databases.listDocuments(
         DATABASE_ID,

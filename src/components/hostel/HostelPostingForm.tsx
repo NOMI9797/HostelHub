@@ -5,16 +5,11 @@ import { useAuth } from '@/lib/auth-context';
 import { HostelService, HostelData, RoomType } from '@/lib/hostel-service';
 import { 
   Building2, 
-  MapPin, 
   Camera, 
-  Phone, 
-  Mail, 
   Users, 
-  CheckCircle,
   X,
   Upload,
-  Plus,
-  Trash2
+  Plus
 } from 'lucide-react';
 
 const FACILITIES = [
@@ -53,6 +48,17 @@ export default function HostelPostingForm() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
 
+  // Location autocomplete states
+  const [citySuggestions, setCitySuggestions] = useState<string[]>([]);
+  const [areaSuggestions, setAreaSuggestions] = useState<string[]>([]);
+  const [landmarkSuggestions, setLandmarkSuggestions] = useState<string[]>([]);
+  const [showCityDropdown, setShowCityDropdown] = useState(false);
+  const [showAreaDropdown, setShowAreaDropdown] = useState(false);
+  const [showLandmarkDropdown, setShowLandmarkDropdown] = useState(false);
+  const [isLoadingCity, setIsLoadingCity] = useState(false);
+  const [isLoadingArea, setIsLoadingArea] = useState(false);
+  const [isLoadingLandmark, setIsLoadingLandmark] = useState(false);
+
   // Form state
   const [formData, setFormData] = useState({
     hostelName: '',
@@ -80,18 +86,119 @@ export default function HostelPostingForm() {
   const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
   const [uploadProgress, setUploadProgress] = useState(0);
 
-  const handleInputChange = (field: string, value: any) => {
+  // Google Places API functions
+  const searchPlaces = async (query: string, type: string) => {
+    if (!query || query.length < 2) return [];
+    
+    try {
+      const response = await fetch(
+        `/api/places?input=${encodeURIComponent(query)}&types=${type}`
+      );
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      // Log the response for debugging
+      console.log('Places API response:', data);
+      
+      if (data.status === 'OK' && data.predictions) {
+        return data.predictions.map((prediction: { description: string }) => prediction.description);
+      } else if (data.status === 'REQUEST_DENIED') {
+        console.error('Google Places API error:', data.error_message);
+        return [];
+      } else if (data.status === 'ZERO_RESULTS') {
+        return [];
+      } else if (data.status === 'INVALID_REQUEST') {
+        console.error('Invalid request:', data.error_message);
+        return [];
+      }
+      
+      return [];
+    } catch (error) {
+      console.error('Error fetching places:', error);
+      return [];
+    }
+  };
+
+  const handleInputChange = (field: string, value: string | number | boolean) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
     }));
   };
 
-  const handleRoomTypeChange = (index: number, field: 'available' | 'price', value: any) => {
+  // Location field handlers
+  const handleCityChange = async (value: string) => {
+    handleInputChange('city', value);
+    setShowCityDropdown(true);
+    
+    if (value.length >= 2) {
+      setIsLoadingCity(true);
+      const suggestions = await searchPlaces(value, '(cities)');
+      setCitySuggestions(suggestions);
+      setIsLoadingCity(false);
+    } else {
+      setCitySuggestions([]);
+      setShowCityDropdown(false);
+    }
+  };
+
+  const handleAreaChange = async (value: string) => {
+    handleInputChange('area', value);
+    setShowAreaDropdown(true);
+    
+    if (value.length >= 2) {
+      setIsLoadingArea(true);
+      const suggestions = await searchPlaces(value, '(regions)');
+      setAreaSuggestions(suggestions);
+      setIsLoadingArea(false);
+    } else {
+      setAreaSuggestions([]);
+      setShowAreaDropdown(false);
+    }
+  };
+
+  const handleLandmarkChange = async (value: string) => {
+    handleInputChange('nearbyLandmark', value);
+    setShowLandmarkDropdown(true);
+    
+    if (value.length >= 2) {
+      setIsLoadingLandmark(true);
+      const suggestions = await searchPlaces(value, 'establishment');
+      setLandmarkSuggestions(suggestions);
+      setIsLoadingLandmark(false);
+    } else {
+      setLandmarkSuggestions([]);
+      setShowLandmarkDropdown(false);
+    }
+  };
+
+  const selectCity = (city: string) => {
+    handleInputChange('city', city);
+    setShowCityDropdown(false);
+    setCitySuggestions([]);
+  };
+
+  const selectArea = (area: string) => {
+    handleInputChange('area', area);
+    setShowAreaDropdown(false);
+    setAreaSuggestions([]);
+  };
+
+  const selectLandmark = (landmark: string) => {
+    handleInputChange('nearbyLandmark', landmark);
+    setShowLandmarkDropdown(false);
+    setLandmarkSuggestions([]);
+  };
+
+  const handleRoomTypeChange = (index: number, field: 'available' | 'price', value: boolean | number | string) => {
     const updatedRoomTypes = [...formData.roomTypes];
     updatedRoomTypes[index] = {
       ...updatedRoomTypes[index],
-      [field]: field === 'available' ? value : parseInt(value)
+      [field]: field === 'available' ? Boolean(value) : Number(value)
     };
     setFormData(prev => ({
       ...prev,
@@ -302,16 +409,43 @@ export default function HostelPostingForm() {
                 />
               </div>
               
-              <div>
+              <div className="relative">
                 <label className="block text-gray-700 font-medium mb-2">City *</label>
                 <input
                   type="text"
                   required
                   value={formData.city}
-                  onChange={(e) => handleInputChange('city', e.target.value)}
+                  onChange={(e) => handleCityChange(e.target.value)}
+                  onFocus={() => formData.city.length >= 2 && setShowCityDropdown(true)}
+                  onBlur={() => setTimeout(() => setShowCityDropdown(false), 200)}
                   className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Enter city"
                 />
+                {showCityDropdown && (
+                  <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                    {isLoadingCity ? (
+                      <div className="px-3 py-2 text-gray-500 text-center">
+                        <div className="inline-flex items-center space-x-2">
+                          <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                          <span>Searching...</span>
+                        </div>
+                      </div>
+                    ) : citySuggestions.length > 0 ? (
+                      citySuggestions.map((city, index) => (
+                        <button
+                          key={index}
+                          type="button"
+                          onClick={() => selectCity(city)}
+                          className="w-full px-3 py-2 text-left hover:bg-gray-50 focus:bg-gray-50 focus:outline-none text-gray-700"
+                        >
+                          {city}
+                        </button>
+                      ))
+                    ) : formData.city.length >= 2 ? (
+                      <div className="px-3 py-2 text-gray-500 text-center">No cities found</div>
+                    ) : null}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -328,27 +462,81 @@ export default function HostelPostingForm() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
+              <div className="relative">
                 <label className="block text-gray-700 font-medium mb-2">Area *</label>
                 <input
                   type="text"
                   required
                   value={formData.area}
-                  onChange={(e) => handleInputChange('area', e.target.value)}
+                  onChange={(e) => handleAreaChange(e.target.value)}
+                  onFocus={() => formData.area.length >= 2 && setShowAreaDropdown(true)}
+                  onBlur={() => setTimeout(() => setShowAreaDropdown(false), 200)}
                   className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Enter area"
                 />
+                {showAreaDropdown && (
+                  <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                    {isLoadingArea ? (
+                      <div className="px-3 py-2 text-gray-500 text-center">
+                        <div className="inline-flex items-center space-x-2">
+                          <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                          <span>Searching...</span>
+                        </div>
+                      </div>
+                    ) : areaSuggestions.length > 0 ? (
+                      areaSuggestions.map((area, index) => (
+                        <button
+                          key={index}
+                          type="button"
+                          onClick={() => selectArea(area)}
+                          className="w-full px-3 py-2 text-left hover:bg-gray-50 focus:bg-gray-50 focus:outline-none text-gray-700"
+                        >
+                          {area}
+                        </button>
+                      ))
+                    ) : formData.area.length >= 2 ? (
+                      <div className="px-3 py-2 text-gray-500 text-center">No areas found</div>
+                    ) : null}
+                  </div>
+                )}
               </div>
               
-              <div>
+              <div className="relative">
                 <label className="block text-gray-700 font-medium mb-2">Nearby Landmark</label>
                 <input
                   type="text"
                   value={formData.nearbyLandmark}
-                  onChange={(e) => handleInputChange('nearbyLandmark', e.target.value)}
+                  onChange={(e) => handleLandmarkChange(e.target.value)}
+                  onFocus={() => formData.nearbyLandmark.length >= 2 && setShowLandmarkDropdown(true)}
+                  onBlur={() => setTimeout(() => setShowLandmarkDropdown(false), 200)}
                   className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="e.g., Near University, Mall, etc."
                 />
+                {showLandmarkDropdown && (
+                  <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                    {isLoadingLandmark ? (
+                      <div className="px-3 py-2 text-gray-500 text-center">
+                        <div className="inline-flex items-center space-x-2">
+                          <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                          <span>Searching...</span>
+                        </div>
+                      </div>
+                    ) : landmarkSuggestions.length > 0 ? (
+                      landmarkSuggestions.map((landmark, index) => (
+                        <button
+                          key={index}
+                          type="button"
+                          onClick={() => selectLandmark(landmark)}
+                          className="w-full px-3 py-2 text-left hover:bg-gray-50 focus:bg-gray-50 focus:outline-none text-gray-700"
+                        >
+                          {landmark}
+                        </button>
+                      ))
+                    ) : formData.nearbyLandmark.length >= 2 ? (
+                      <div className="px-3 py-2 text-gray-500 text-center">No landmarks found</div>
+                    ) : null}
+                  </div>
+                )}
               </div>
             </div>
           </div>

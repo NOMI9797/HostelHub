@@ -125,16 +125,16 @@ export default function HomePage() {
           </div>
 
           {/* Trust Indicators */}
-          <div className="flex flex-wrap justify-center gap-6 mt-8">
-            <div className="flex items-center space-x-2 text-gray-600">
+          <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-4 sm:gap-6 mt-8">
+            <div className="flex items-center justify-center space-x-2 text-gray-600">
               <Shield className="w-5 h-5 text-green-600" />
               <span className="text-sm font-medium">Secure Booking</span>
             </div>
-            <div className="flex items-center space-x-2 text-gray-600">
+            <div className="flex items-center justify-center space-x-2 text-gray-600">
               <CheckCircle className="w-5 h-5 text-green-600" />
               <span className="text-sm font-medium">Verified Hostels</span>
             </div>
-            <div className="flex items-center space-x-2 text-gray-600">
+            <div className="flex items-center justify-center space-x-2 text-gray-600">
               <HeadphonesIcon className="w-5 h-5 text-green-600" />
               <span className="text-sm font-medium">24/7 Support</span>
             </div>
