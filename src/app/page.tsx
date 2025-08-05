@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { Search, Shield, CheckCircle, HeadphonesIcon, MapPin as MapPinIcon } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import HostelCard from '@/components/hostel/HostelCard';
@@ -159,11 +160,31 @@ export default function HomePage() {
               </p>
             </div>
           ) : hostels.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {hostels.map((hostel) => (
-                <HostelCard key={hostel.hostelId} hostel={hostel} />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {hostels.slice(0, 6).map((hostel) => (
+                  <HostelCard key={hostel.hostelId} hostel={hostel} />
+                ))}
+              </div>
+              
+              {/* Explore All Hostels Button */}
+              {!isFiltered && hostels.length > 6 && (
+                <div className="text-center mt-12">
+                  <Link
+                    href="/explore-hostels"
+                    className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-4 px-8 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  >
+                    <span>Explore All Hostels</span>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                  </Link>
+                  <p className="text-gray-600 mt-4">
+                    Discover {hostels.length - 6} more amazing hostels
+                  </p>
+                </div>
+              )}
+            </>
           ) : (
             <div className="text-center py-16">
               <div className="w-32 h-32 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-8">
