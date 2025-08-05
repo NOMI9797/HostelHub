@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
-import { Home as HomeIcon, Menu, CheckCircle } from 'lucide-react';
+import { Home as HomeIcon, Menu, Users, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 
 export default function Header() {
@@ -42,6 +42,16 @@ export default function Header() {
                   <span>Dashboard</span>
                 </Link>
               )}
+              
+              <Link href="/about" className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-blue-600 font-medium transition-colors">
+                <Users className="w-4 h-4" />
+                <span>About Us</span>
+              </Link>
+              
+              <Link href="/contact" className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-blue-600 font-medium transition-colors">
+                <MessageSquare className="w-4 h-4" />
+                <span>Contact</span>
+              </Link>
             </nav>
 
             {/* Auth Buttons */}
@@ -129,6 +139,23 @@ export default function Header() {
                     <span>Dashboard</span>
                   </Link>
                 )}
+
+                {/* Mobile Pages */}
+                <div className="space-y-2">
+                  <Link href="/about" className="flex items-center space-x-4 text-gray-700 hover:text-blue-600 font-semibold transition-all duration-300 p-3 rounded-xl hover:bg-green-50">
+                    <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center">
+                      <Users className="w-5 h-5" />
+                    </div>
+                    <span>About Us</span>
+                  </Link>
+                  
+                  <Link href="/contact" className="flex items-center space-x-4 text-gray-700 hover:text-blue-600 font-semibold transition-all duration-300 p-3 rounded-xl hover:bg-orange-50">
+                    <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center">
+                      <MessageSquare className="w-5 h-5" />
+                    </div>
+                    <span>Contact</span>
+                  </Link>
+                </div>
               </nav>
 
               {/* Mobile Auth Buttons */}

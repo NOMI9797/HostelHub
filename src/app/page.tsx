@@ -238,30 +238,44 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+      {/* Made with Love Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-transparent">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-3xl p-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-6">
-              Start Your Journey Today
-            </h2>
-            <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
-              Whether you&apos;re a student looking for affordable accommodation or a traveler seeking authentic experiences, 
-              HostelHub connects you with the perfect place to stay.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button 
-                onClick={handleShowAll}
-                className="bg-blue-600 text-white py-4 px-10 rounded-xl hover:bg-blue-700 transition-all duration-200 font-semibold text-lg shadow-lg hover:shadow-xl"
-              >
-                Explore Hostels
-              </button>
-              <button 
-                onClick={() => window.location.href = '/auth'}
-                className="border-2 border-blue-600 text-blue-600 py-4 px-10 rounded-xl hover:bg-blue-50 transition-all duration-200 font-semibold text-lg"
-              >
-                List Your Hostel
-              </button>
+          <div className="bg-white/20 backdrop-blur-sm rounded-3xl p-12 relative overflow-hidden border border-white/30">
+            {/* Background decorative elements */}
+            <div className="absolute top-0 left-0 w-full h-full opacity-5">
+              <div className="absolute top-4 left-4 w-16 h-16 bg-pink-300 rounded-full blur-xl"></div>
+              <div className="absolute bottom-4 right-4 w-20 h-20 bg-red-300 rounded-full blur-xl"></div>
+              <div className="absolute top-1/2 left-1/4 w-12 h-12 bg-rose-300 rounded-full blur-lg"></div>
+            </div>
+            
+            <div className="relative z-10">
+              <div className="mb-6">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-pink-400/80 to-red-500/80 rounded-full shadow-lg mb-4 backdrop-blur-sm">
+                  <span className="text-white text-2xl">❤️</span>
+                </div>
+              </div>
+              
+              <h2 className="text-4xl font-bold text-gray-900 mb-3">
+                Made with{' '}
+                <span className="bg-gradient-to-r from-pink-600 to-red-600 bg-clip-text text-transparent">
+                  Love
+                </span>
+              </h2>
+              
+              <p className="text-xl text-gray-700 mb-6">
+                by{' '}
+                <span className="font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                  SYNTAX
+                </span>
+              </p>
+              
+              <div className="max-w-md mx-auto">
+                <p className="text-gray-600 leading-relaxed">
+                  Crafted with passion and dedication by the SYNTAX team. 
+                  We believe in creating solutions that make a difference in students&apos; lives.
+                </p>
+              </div>
             </div>
           </div>
         </div>

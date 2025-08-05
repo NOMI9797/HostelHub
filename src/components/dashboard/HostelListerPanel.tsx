@@ -7,9 +7,6 @@ import {
   Plus, 
   Settings, 
   Users, 
-  BarChart3, 
-  Menu,
-  CheckCircle,
   Star,
   MapPin,
   Edit,
@@ -374,7 +371,7 @@ export default function HostelListerPanel({ user }: HostelListerPanelProps) {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white flex flex-col">
       {/* Unified Header */}
       <Header />
 
@@ -386,51 +383,54 @@ export default function HostelListerPanel({ user }: HostelListerPanelProps) {
         />
       )}
 
-      {/* Sidebar */}
-      <div className={`fixed top-16 left-0 bottom-0 z-30 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 lg:translate-x-0 ${
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      }`}>
-        <div className="flex flex-col h-full">
-          {/* Navigation */}
-          <nav className="flex-1 p-6 space-y-2">
-            {menuItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => setActiveTab(item.id)}
-                className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 ${
-                  activeTab === item.id
-                    ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                    : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                }`}
-              >
-                <div className={`w-8 h-8 ${getIconColor(item.color)} rounded-lg flex items-center justify-center`}>
-                  <item.icon className="w-4 h-4" />
-                </div>
-                <span className="font-medium">{item.label}</span>
-              </button>
-            ))}
-          </nav>
+      {/* Main Container with Sidebar and Content */}
+      <div className="flex flex-1">
+        {/* Sidebar */}
+        <div className={`fixed top-16 left-0 z-30 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 lg:translate-x-0 lg:relative lg:top-0 ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}>
+          <div className="flex flex-col h-[calc(100vh-4rem)] lg:h-full">
+            {/* Navigation */}
+            <nav className="flex-1 p-6 space-y-2">
+              {menuItems.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveTab(item.id)}
+                  className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 ${
+                    activeTab === item.id
+                      ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                      : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                  }`}
+                >
+                  <div className={`w-8 h-8 ${getIconColor(item.color)} rounded-lg flex items-center justify-center`}>
+                    <item.icon className="w-4 h-4" />
+                  </div>
+                  <span className="font-medium">{item.label}</span>
+                </button>
+              ))}
+            </nav>
 
-          {/* User Info */}
-          <div className="p-6 border-t border-gray-200">
-            <div className="text-center">
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                <span className="text-blue-600 font-bold text-lg">
-                  {user?.email?.charAt(0).toUpperCase()}
-                </span>
+            {/* User Info */}
+            <div className="p-6 border-t border-gray-200">
+              <div className="text-center">
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <span className="text-blue-600 font-bold text-lg">
+                    {user?.email?.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+                <p className="text-gray-600 text-xs">Hostel Lister</p>
               </div>
-              <p className="text-gray-600 text-xs">Hostel Lister</p>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="lg:ml-64">
-        {/* Page Content */}
-        <main>
-          {renderContent()}
-        </main>
+        {/* Main Content */}
+        <div className="flex-1 lg:ml-0">
+          {/* Page Content */}
+          <main className="min-h-full">
+            {renderContent()}
+          </main>
+        </div>
       </div>
     </div>
   );
