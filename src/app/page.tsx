@@ -97,7 +97,7 @@ export default function HomePage() {
                   {/* Show All Button */}
                   <button 
                     onClick={handleShowAll}
-                    className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-6 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                    className="bg-white text-blue-600 py-3 px-6 rounded-lg hover:bg-blue-50 transition-all duration-200 font-semibold shadow-md hover:shadow-lg border-2 border-blue-200 hover:border-blue-300"
                   >
                     Show All
                   </button>

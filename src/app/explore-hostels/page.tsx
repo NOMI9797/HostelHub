@@ -13,6 +13,8 @@ export default function ExploreHostelsPage() {
   const [searchLocation, setSearchLocation] = useState('');
   const [selectedGender, setSelectedGender] = useState('');
   const [isFiltered, setIsFiltered] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const hostelsPerPage = 6;
 
   // Filter hostels based on search criteria
   const filteredHostels = hostels.filter(hostel => {
@@ -39,16 +41,31 @@ export default function ExploreHostelsPage() {
     setSearchLocation('');
     setSelectedGender('');
     setIsFiltered(false);
+    setCurrentPage(1);
   };
 
   // Auto-search on filter changes
   useEffect(() => {
     if (searchTerm || searchLocation || selectedGender) {
       setIsFiltered(true);
+      setCurrentPage(1);
     } else {
       setIsFiltered(false);
+      setCurrentPage(1);
     }
   }, [searchTerm, searchLocation, selectedGender]);
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredHostels.length / hostelsPerPage);
+  const startIndex = (currentPage - 1) * hostelsPerPage;
+  const endIndex = startIndex + hostelsPerPage;
+  const currentHostels = filteredHostels.slice(startIndex, endIndex);
+
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
@@ -56,8 +73,8 @@ export default function ExploreHostelsPage() {
       
       {/* Page Header */}
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-200">
-        <div className="max-w-7xl mx-auto px-6 py-12">
-          <div className="flex items-center space-x-3 mb-4">
+        <div className="max-w-7xl mx-auto px-6 py-6">
+          <div className="flex items-center space-x-3 mb-2">
             <Link 
               href="/"
               className="inline-flex items-center space-x-2 text-blue-600 hover:text-blue-700 transition-colors"
@@ -66,10 +83,7 @@ export default function ExploreHostelsPage() {
               <span>Back to Home</span>
             </Link>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Explore All Hostels</h1>
-          <p className="text-xl text-gray-600 max-w-3xl">
-            Discover amazing hostel accommodations across Pakistan. Find your perfect place to stay with our comprehensive search and filtering options.
-          </p>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Explore All Hostels</h1>
         </div>
       </div>
 
@@ -123,7 +137,7 @@ export default function ExploreHostelsPage() {
             <div className="flex flex-col sm:flex-row gap-4 mt-4">
               <button
                 onClick={handleSearch}
-                className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-6 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                className="flex-1 bg-white text-blue-600 py-3 px-6 rounded-lg hover:bg-blue-50 transition-all duration-200 font-semibold shadow-md hover:shadow-lg border-2 border-blue-200 hover:border-blue-300"
               >
                 Search Hostels
               </button>
@@ -143,21 +157,6 @@ export default function ExploreHostelsPage() {
       {/* Results Section */}
       <section className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-green-100 text-green-800 mb-6">
-              <span className="w-2 h-2 bg-green-600 rounded-full mr-2"></span>
-              {isFiltered ? 'Search Results' : 'All Hostels'}
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              {isFiltered ? 'Search Results' : 'All Available Hostels'}
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              {isFiltered 
-                ? `Found ${filteredHostels.length} hostel${filteredHostels.length !== 1 ? 's' : ''} matching your search criteria`
-                : `Discover ${hostels.length} amazing hostels with excellent amenities and prime locations across Pakistan`
-              }
-            </p>
-          </div>
           
           {loading ? (
             <div className="text-center py-16">
@@ -180,11 +179,60 @@ export default function ExploreHostelsPage() {
               </p>
             </div>
           ) : filteredHostels.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredHostels.map((hostel) => (
-                <HostelCard key={hostel.hostelId} hostel={hostel} />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {currentHostels.map((hostel) => (
+                  <HostelCard key={hostel.hostelId} hostel={hostel} />
+                ))}
+              </div>
+              
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="mt-12">
+                  <div className="flex items-center justify-center space-x-2">
+                    {/* Previous Button */}
+                    <button
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className="px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      Previous
+                    </button>
+                    
+                    {/* Page Numbers */}
+                    <div className="flex items-center space-x-1">
+                      {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
+                        <button
+                          key={page}
+                          onClick={() => handlePageChange(page)}
+                          className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                            currentPage === page
+                              ? 'bg-blue-600 text-white'
+                              : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+                          }`}
+                        >
+                          {page}
+                        </button>
+                      ))}
+                    </div>
+                    
+                    {/* Next Button */}
+                    <button
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className="px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      Next
+                    </button>
+                  </div>
+                  
+                  {/* Page Info */}
+                  <div className="text-center mt-4 text-sm text-gray-600">
+                    Showing {startIndex + 1} to {Math.min(endIndex, filteredHostels.length)} of {filteredHostels.length} hostels
+                  </div>
+                </div>
+              )}
+            </>
           ) : (
             <div className="text-center py-16">
               <div className="w-32 h-32 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-8">
