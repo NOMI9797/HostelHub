@@ -82,9 +82,7 @@ export default function HostelPostingForm() {
     genderSpecific: 'co-ed' as 'boys' | 'girls' | 'co-ed',
   });
 
-  // File upload states - used for form validation and display
-  const [mainPhotoFile, setMainPhotoFile] = useState<File | null>(null);
-  const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
+  // File upload states
   const [uploadProgress, setUploadProgress] = useState(0);
 
   // Google Places API functions
@@ -234,7 +232,7 @@ export default function HostelPostingForm() {
 
       const photoUrl = await HostelService.uploadHostelPhoto(file);
       setFormData(prev => ({ ...prev, mainPhoto: photoUrl }));
-      setMainPhotoFile(file);
+
       setUploadProgress(100);
       
       setTimeout(() => setUploadProgress(0), 1000);
@@ -278,7 +276,7 @@ export default function HostelPostingForm() {
         galleryImages: [...prev.galleryImages, ...uploadedUrls]
       }));
       
-      setGalleryFiles(prev => [...prev, ...validFiles]);
+
     } catch (error) {
       console.error('Error uploading gallery images:', error);
       setMessage('Failed to upload gallery images. Please try again.');
@@ -293,7 +291,7 @@ export default function HostelPostingForm() {
       ...prev,
       galleryImages: prev.galleryImages.filter((_, i) => i !== index)
     }));
-    setGalleryFiles(prev => prev.filter((_, i) => i !== index));
+
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -368,8 +366,7 @@ export default function HostelPostingForm() {
         genderSpecific: 'co-ed',
       });
       
-      setMainPhotoFile(null);
-      setGalleryFiles([]);
+
       
       // Redirect after 2 seconds
       setTimeout(() => {
@@ -567,7 +564,7 @@ export default function HostelPostingForm() {
                       type="button"
                       onClick={() => {
                         setFormData(prev => ({ ...prev, mainPhoto: '' }));
-                        setMainPhotoFile(null);
+                
                       }}
                       className="text-red-600 hover:text-red-700 text-sm"
                     >

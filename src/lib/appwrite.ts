@@ -50,7 +50,7 @@ export const authService = {
   },
 
   // Sign up with Google OAuth
-  async signUpWithGoogle(_role: UserRole) {
+  async signUpWithGoogle() {
     try {
       // Role is stored in sessionStorage and used in auth callback
       const session = await account.createOAuth2Session(

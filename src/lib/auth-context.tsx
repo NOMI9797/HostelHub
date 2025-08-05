@@ -90,7 +90,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       // Store the selected role temporarily
       sessionStorage.setItem('selectedRole', role);
-      await authService.signUpWithGoogle(role);
+      await authService.signUpWithGoogle();
       // After successful OAuth, check auth status again
       await checkAuthStatus();
     } catch {
