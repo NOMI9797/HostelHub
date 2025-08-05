@@ -382,14 +382,9 @@ export default function HostelPostingForm() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4 sm:p-6">
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
-        <div className="p-4 sm:p-6 border-b border-gray-200">
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Post a New Hostel</h1>
-          <p className="text-gray-600 text-sm sm:text-base">Create a new hostel listing to attract travelers and grow your business.</p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-6 sm:space-y-8">
+    <div className="w-full">
+      <div className="bg-white rounded-xl border border-gray-200 shadow-lg">
+        <form onSubmit={handleSubmit} className="p-8 space-y-8">
           {/* Basic Information */}
           <div className="space-y-6">
             <h2 className="text-xl font-semibold text-gray-900 flex items-center space-x-2">

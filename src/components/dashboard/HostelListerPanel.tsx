@@ -43,7 +43,6 @@ export default function HostelListerPanel({ user }: HostelListerPanelProps) {
     { id: 'post-hostel', label: 'Post a Hostel', icon: Plus, color: 'green' },
     { id: 'posted-hostels', label: 'Posted Hostels', icon: Building2, color: 'purple' },
     { id: 'bookings', label: 'Bookings', icon: Users, color: 'pink' },
-    { id: 'analytics', label: 'Analytics', icon: BarChart3, color: 'orange' },
     { id: 'settings', label: 'Settings', icon: Settings, color: 'gray' },
   ];
 
@@ -107,28 +106,27 @@ export default function HostelListerPanel({ user }: HostelListerPanelProps) {
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200 p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome back, {user?.email?.split('@')[0]}! 👋</h2>
-                  <p className="text-gray-600">Here&apos;s what&apos;s happening with your hostel business today.</p>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Dashboard Overview</h2>
+                  <p className="text-gray-600">Manage your hostel business efficiently</p>
                 </div>
                 <div className="hidden md:flex items-center space-x-2 bg-white/80 backdrop-blur-sm rounded-lg px-4 py-2">
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-sm text-gray-600">Live Dashboard</span>
+                  <span className="text-sm text-gray-600">Live</span>
                 </div>
               </div>
             </div>
 
             {/* Key Statistics */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-all duration-200">
                 <div className="flex items-center justify-between mb-4">
                   <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                     <Building2 className="w-6 h-6 text-blue-600" />
                   </div>
-                  <span className="text-sm text-green-600 bg-green-100 px-2 py-1 rounded-full">+12%</span>
+                  <span className="text-sm text-green-600 bg-green-100 px-2 py-1 rounded-full">Active</span>
                 </div>
                 <div className="text-2xl font-bold text-gray-900 mb-1">{postedHostels.length}</div>
                 <div className="text-gray-600 text-sm">Active Listings</div>
-                <div className="text-xs text-gray-500 mt-2">From last month</div>
               </div>
 
               <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-all duration-200">
@@ -136,126 +134,53 @@ export default function HostelListerPanel({ user }: HostelListerPanelProps) {
                   <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                     <Users className="w-6 h-6 text-green-600" />
                   </div>
-                  <span className="text-sm text-green-600 bg-green-100 px-2 py-1 rounded-full">+8%</span>
+                  <span className="text-sm text-blue-600 bg-blue-100 px-2 py-1 rounded-full">Total</span>
                 </div>
-                <div className="text-2xl font-bold text-gray-900 mb-1">24</div>
+                <div className="text-2xl font-bold text-gray-900 mb-1">0</div>
                 <div className="text-gray-600 text-sm">Total Bookings</div>
-                <div className="text-xs text-gray-500 mt-2">This month</div>
               </div>
 
               <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-all duration-200">
                 <div className="flex items-center justify-between mb-4">
                   <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <BarChart3 className="w-6 h-6 text-purple-600" />
+                    <Star className="w-6 h-6 text-purple-600" />
                   </div>
-                  <span className="text-sm text-green-600 bg-green-100 px-2 py-1 rounded-full">+15%</span>
+                  <span className="text-sm text-orange-600 bg-orange-100 px-2 py-1 rounded-full">Avg</span>
                 </div>
-                <div className="text-2xl font-bold text-gray-900 mb-1">PKR 180K</div>
-                <div className="text-gray-600 text-sm">Monthly Revenue</div>
-                <div className="text-xs text-gray-500 mt-2">+PKR 23K vs last month</div>
-              </div>
-
-              <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-all duration-200">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                    <Star className="w-6 h-6 text-orange-600" />
-                  </div>
-                  <span className="text-sm text-green-600 bg-green-100 px-2 py-1 rounded-full">+5%</span>
-                </div>
-                <div className="text-2xl font-bold text-gray-900 mb-1">4.8</div>
+                <div className="text-2xl font-bold text-gray-900 mb-1">-</div>
                 <div className="text-gray-600 text-sm">Average Rating</div>
-                <div className="text-xs text-gray-500 mt-2">From 156 reviews</div>
               </div>
             </div>
 
-            {/* Recent Activity & Quick Actions */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Recent Activity */}
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Recent Activity</h3>
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-3 p-3 bg-green-50 rounded-lg">
-                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                      <CheckCircle className="w-4 h-4 text-green-600" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900">New booking received</p>
-                      <p className="text-xs text-gray-500">Lavish Hostel - 2 hours ago</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg">
-                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                      <Star className="w-4 h-4 text-blue-600" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900">New 5-star review</p>
-                      <p className="text-xs text-gray-500">Munawar Hostel - 5 hours ago</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center space-x-3 p-3 bg-purple-50 rounded-lg">
-                    <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                      <Eye className="w-4 h-4 text-purple-600" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900">Profile viewed 45 times</p>
-                      <p className="text-xs text-gray-500">Today&apos;s total views</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Quick Actions */}
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Actions</h3>
-                <div className="space-y-3">
-                  <button 
-                    onClick={() => window.location.href = '/post-hostel'}
-                    className="w-full flex items-center space-x-3 p-4 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 font-medium"
-                  >
-                    <Plus className="w-5 h-5" />
-                    <span>Add New Hostel</span>
-                  </button>
-                  
-                  <button 
-                    onClick={() => setActiveTab('posted-hostels')}
-                    className="w-full flex items-center space-x-3 p-4 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-all duration-200 font-medium"
-                  >
-                    <Building2 className="w-5 h-5" />
-                    <span>Manage Listings</span>
-                  </button>
-                  
-                  <button 
-                    onClick={() => setActiveTab('analytics')}
-                    className="w-full flex items-center space-x-3 p-4 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-all duration-200 font-medium"
-                  >
-                    <BarChart3 className="w-5 h-5" />
-                    <span>View Analytics</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Performance Overview */}
+            {/* Quick Actions */}
             <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Performance Overview</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="text-center p-4 bg-gray-50 rounded-lg">
-                  <div className="text-2xl font-bold text-blue-600 mb-1">89%</div>
-                  <div className="text-sm text-gray-600">Occupancy Rate</div>
-                  <div className="text-xs text-green-600 mt-1">+5% this week</div>
-                </div>
-                <div className="text-center p-4 bg-gray-50 rounded-lg">
-                  <div className="text-2xl font-bold text-green-600 mb-1">156</div>
-                  <div className="text-sm text-gray-600">Total Reviews</div>
-                  <div className="text-xs text-green-600 mt-1">+12 this month</div>
-                </div>
-                <div className="text-center p-4 bg-gray-50 rounded-lg">
-                  <div className="text-2xl font-bold text-purple-600 mb-1">2.3K</div>
-                  <div className="text-sm text-gray-600">Profile Views</div>
-                  <div className="text-xs text-green-600 mt-1">+18% this month</div>
-                </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-6">Quick Actions</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <button 
+                  onClick={() => window.location.href = '/post-hostel'}
+                  className="flex items-center space-x-3 p-4 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 transition-all duration-200 group"
+                >
+                  <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
+                    <Plus className="w-5 h-5 text-green-600" />
+                  </div>
+                  <div className="text-left">
+                    <p className="font-medium text-gray-900">Add New Hostel</p>
+                    <p className="text-sm text-gray-600">Create a new listing</p>
+                  </div>
+                </button>
+                
+                <button 
+                  onClick={() => setActiveTab('posted-hostels')}
+                  className="flex items-center space-x-3 p-4 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-all duration-200 group"
+                >
+                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                    <Building2 className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <div className="text-left">
+                    <p className="font-medium text-gray-900">Manage Listings</p>
+                    <p className="text-sm text-gray-600">View and edit hostels</p>
+                  </div>
+                </button>
               </div>
             </div>
           </div>
@@ -287,21 +212,26 @@ export default function HostelListerPanel({ user }: HostelListerPanelProps) {
       
       case 'posted-hostels':
         return (
-          <div className="space-y-6">
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <div className="flex items-center justify-between mb-6">
+          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+            {/* Header Section */}
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-200 p-6">
+              <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900">Posted Hostels</h2>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Posted Hostels</h2>
                   <p className="text-gray-600">Manage your hostel listings and view their performance.</p>
                 </div>
                 <button 
                   onClick={() => window.location.href = '/post-hostel'}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 font-semibold flex items-center space-x-2"
+                  className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 font-semibold flex items-center space-x-2 shadow-lg hover:shadow-xl"
                 >
-                  <Plus className="w-4 h-4" />
+                  <Plus className="w-5 h-5" />
                   <span>Add New</span>
                 </button>
               </div>
+            </div>
+
+            {/* Content Section */}
+            <div className="p-6">
 
               {loading ? (
                 <div className="text-center py-12">
@@ -406,137 +336,7 @@ export default function HostelListerPanel({ user }: HostelListerPanelProps) {
           </div>
         );
       
-      case 'analytics':
-        return (
-          <div className="space-y-6">
-            {/* Analytics Header */}
-            <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl border border-purple-200 p-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Analytics Dashboard</h2>
-              <p className="text-gray-600">Comprehensive insights into your hostel business performance.</p>
-            </div>
 
-            {/* Key Metrics */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <Eye className="w-6 h-6 text-blue-600" />
-                  </div>
-                  <span className="text-sm text-green-600 bg-green-100 px-2 py-1 rounded-full">+23%</span>
-                </div>
-                <div className="text-2xl font-bold text-gray-900 mb-1">2,847</div>
-                <div className="text-gray-600 text-sm">Total Views</div>
-                <div className="text-xs text-gray-500 mt-2">Last 30 days</div>
-              </div>
-
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                    <Users className="w-6 h-6 text-green-600" />
-                  </div>
-                  <span className="text-sm text-green-600 bg-green-100 px-2 py-1 rounded-full">+12%</span>
-                </div>
-                <div className="text-2xl font-bold text-gray-900 mb-1">156</div>
-                <div className="text-gray-600 text-sm">Unique Visitors</div>
-                <div className="text-xs text-gray-500 mt-2">This week</div>
-              </div>
-
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                    <Star className="w-6 h-6 text-orange-600" />
-                  </div>
-                  <span className="text-sm text-green-600 bg-green-100 px-2 py-1 rounded-full">+8%</span>
-                </div>
-                <div className="text-2xl font-bold text-gray-900 mb-1">4.8</div>
-                <div className="text-gray-600 text-sm">Avg. Rating</div>
-                <div className="text-xs text-gray-500 mt-2">From 89 reviews</div>
-              </div>
-
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <BarChart3 className="w-6 h-6 text-purple-600" />
-                  </div>
-                  <span className="text-sm text-green-600 bg-green-100 px-2 py-1 rounded-full">+15%</span>
-                </div>
-                <div className="text-2xl font-bold text-gray-900 mb-1">5.2%</div>
-                <div className="text-gray-600 text-sm">Conversion Rate</div>
-                <div className="text-xs text-gray-500 mt-2">Views to bookings</div>
-              </div>
-            </div>
-
-            {/* Performance Charts */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Monthly Revenue */}
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Monthly Revenue</h3>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <span className="text-sm text-gray-600">January</span>
-                    <span className="font-semibold text-gray-900">PKR 145K</span>
-                  </div>
-                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <span className="text-sm text-gray-600">February</span>
-                    <span className="font-semibold text-gray-900">PKR 167K</span>
-                  </div>
-                  <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
-                    <span className="text-sm text-gray-600">March</span>
-                    <span className="font-semibold text-blue-900">PKR 180K</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Popular Hostels */}
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Top Performing Hostels</h3>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                        <span className="text-xs font-bold text-blue-600">1</span>
-                      </div>
-                      <span className="text-sm font-medium text-gray-900">Lavish Hostel</span>
-                    </div>
-                    <span className="text-sm text-green-600">+18%</span>
-                  </div>
-                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                        <span className="text-xs font-bold text-green-600">2</span>
-                      </div>
-                      <span className="text-sm font-medium text-gray-900">Munawar Hostel</span>
-                    </div>
-                    <span className="text-sm text-green-600">+12%</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Insights */}
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Key Insights</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-                  <h4 className="font-semibold text-green-800 mb-2">📈 Growth Opportunity</h4>
-                  <p className="text-sm text-green-700">Your occupancy rate is 15% above the market average. Consider adding more rooms to capitalize on demand.</p>
-                </div>
-                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                  <h4 className="font-semibold text-blue-800 mb-2">⭐ Customer Satisfaction</h4>
-                  <p className="text-sm text-blue-700">Your 4.8 rating is excellent! Focus on maintaining this quality to attract more bookings.</p>
-                </div>
-                <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
-                  <h4 className="font-semibold text-purple-800 mb-2">🎯 Marketing Tip</h4>
-                  <p className="text-sm text-purple-700">Peak booking times are between 2-4 PM. Consider running promotions during these hours.</p>
-                </div>
-                <div className="p-4 bg-orange-50 rounded-lg border border-orange-200">
-                  <h4 className="font-semibold text-orange-800 mb-2">💰 Revenue Optimization</h4>
-                  <p className="text-sm text-orange-700">Your conversion rate is strong. Consider dynamic pricing to maximize revenue during peak seasons.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
       
       case 'settings':
         return (
@@ -619,7 +419,6 @@ export default function HostelListerPanel({ user }: HostelListerPanelProps) {
                   {user?.email?.charAt(0).toUpperCase()}
                 </span>
               </div>
-              <p className="text-gray-900 font-medium text-sm mb-1">{user?.email}</p>
               <p className="text-gray-600 text-xs">Hostel Lister</p>
             </div>
           </div>
@@ -627,24 +426,9 @@ export default function HostelListerPanel({ user }: HostelListerPanelProps) {
       </div>
 
       {/* Main Content */}
-      <div className="lg:ml-64 pt-16">
-        {/* Page Title */}
-        <div className="p-4 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <h1 className="text-xl font-semibold text-gray-900">
-              {menuItems.find(item => item.id === activeTab)?.label}
-            </h1>
-            <button
-              onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-all duration-300"
-            >
-              <Menu className="w-6 h-6 text-gray-700" />
-            </button>
-          </div>
-        </div>
-
+      <div className="lg:ml-64">
         {/* Page Content */}
-        <main className="p-6">
+        <main>
           {renderContent()}
         </main>
       </div>

@@ -6,7 +6,7 @@ import { Home as HomeIcon, Menu, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 
 export default function Header() {
-  const { loading, isAuthenticated, signOut } = useAuth();
+  const { loading, isAuthenticated, signOut, user } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleSignOut = async () => {
@@ -16,67 +16,65 @@ export default function Header() {
 
   return (
     <>
-            <header className="relative bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
+            <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex justify-between items-center h-16">
             {/* Logo */}
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
-                  <HomeIcon className="w-7 h-7 text-white" />
-                </div>
-                <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white shadow-sm"></div>
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                <HomeIcon className="w-6 h-6 text-white" />
               </div>
               <div>
-                <span className="text-2xl font-bold text-gray-900">
-                  HostelHub
-                </span>
-                <div className="flex items-center space-x-1">
-                  <CheckCircle className="w-3 h-3 text-green-600" />
-                  <span className="text-xs text-gray-600 font-medium">Trusted Hostel Booking</span>
-                </div>
+                <h1 className="text-xl font-bold text-gray-900">HostelHub</h1>
+                <p className="text-xs text-gray-500">Trusted Hostel Booking</p>
               </div>
             </div>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-12">
-              <Link href="/" className="text-gray-700 hover:text-blue-600 font-semibold transition-all duration-300 hover:scale-105 flex items-center space-x-2 group">
-                <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center group-hover:bg-blue-100 transition-colors">
-                  <HomeIcon className="w-4 h-4" />
-                </div>
+            <nav className="hidden md:flex items-center space-x-8">
+              <Link href="/" className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-blue-600 font-medium transition-colors">
+                <HomeIcon className="w-4 h-4" />
                 <span>Home</span>
               </Link>
               {!loading && isAuthenticated && (
-                <Link href="/dashboard" className="text-gray-700 hover:text-blue-600 font-semibold transition-all duration-300 hover:scale-105 flex items-center space-x-2 group">
-                  <div className="w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center group-hover:bg-purple-100 transition-colors">
-                    <HomeIcon className="w-4 h-4" />
-                  </div>
+                <Link href="/dashboard" className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-blue-600 font-medium transition-colors">
+                  <HomeIcon className="w-4 h-4" />
                   <span>Dashboard</span>
                 </Link>
               )}
             </nav>
 
             {/* Auth Buttons */}
-            <div className="hidden md:flex items-center space-x-6">
+            <div className="hidden md:flex items-center space-x-4">
               {loading ? (
-                // Loading state
-                <div className="flex items-center space-x-3 bg-gray-50 px-4 py-2 rounded-xl">
+                <div className="flex items-center space-x-2 px-4 py-2 text-gray-500">
                   <div className="w-4 h-4 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
-                  <span className="text-gray-600 text-sm font-medium">Loading...</span>
+                  <span className="text-sm">Loading...</span>
                 </div>
               ) : isAuthenticated ? (
-                <button 
-                  onClick={handleSignOut}
-                  className="px-8 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                >
-                  Sign Out
-                </button>
+                <div className="flex items-center space-x-3">
+                  {/* User Info */}
+                  <div className="flex items-center space-x-3 px-3 py-2 bg-gray-50 rounded-lg">
+                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                      <span className="text-blue-600 font-semibold text-sm">
+                        {user?.email?.charAt(0).toUpperCase() || 'U'}
+                      </span>
+                    </div>
+                    <span className="text-sm font-medium text-gray-700">{user?.role || 'User'}</span>
+                  </div>
+                  <button 
+                    onClick={handleSignOut}
+                    className="px-4 py-2 text-gray-600 hover:text-red-600 font-medium transition-colors"
+                  >
+                    Sign Out
+                  </button>
+                </div>
               ) : (
                 <>
-                  <Link href="/auth" className="px-6 py-3 text-gray-700 hover:text-blue-600 font-semibold transition-all duration-300 hover:scale-105">
+                  <Link href="/auth" className="px-4 py-2 text-gray-600 hover:text-blue-600 font-medium transition-colors">
                     Login
                   </Link>
-                  <Link href="/auth" className="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                  <Link href="/auth" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors">
                     Sign Up
                   </Link>
                 </>
@@ -86,9 +84,9 @@ export default function Header() {
             {/* Mobile Menu Button */}
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-3 rounded-xl hover:bg-gray-100 transition-all duration-300"
+              className="md:hidden p-2 text-gray-600 hover:text-gray-900 transition-colors"
             >
-              <Menu className="w-6 h-6 text-gray-700" />
+              <Menu className="w-5 h-5" />
             </button>
           </div>
         </div>
@@ -141,12 +139,25 @@ export default function Header() {
                     <span className="text-gray-600 text-sm font-medium">Loading...</span>
                   </div>
                 ) : isAuthenticated ? (
-                  <button 
-                    onClick={handleSignOut}
-                    className="w-full px-6 py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-300 font-semibold shadow-lg"
-                  >
-                    Sign Out
-                  </button>
+                  <>
+                    {/* Mobile User Info */}
+                    <div className="flex items-center space-x-3 bg-gray-50 px-4 py-3 rounded-xl">
+                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                        <span className="text-blue-600 font-bold text-lg">
+                          {user?.email?.charAt(0).toUpperCase() || 'U'}
+                        </span>
+                      </div>
+                      <div>
+                        <p className="text-gray-600 text-sm font-medium">{user?.role || 'User'}</p>
+                      </div>
+                    </div>
+                    <button 
+                      onClick={handleSignOut}
+                      className="w-full px-6 py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-300 font-semibold shadow-lg"
+                    >
+                      Sign Out
+                    </button>
+                  </>
                 ) : (
                   <>
                     <Link href="/auth" className="block w-full px-6 py-4 text-gray-700 hover:text-blue-600 font-semibold transition-all duration-300 text-center rounded-xl hover:bg-gray-50">
