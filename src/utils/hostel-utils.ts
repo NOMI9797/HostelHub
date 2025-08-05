@@ -2,10 +2,34 @@ import { HostelDataFromDB, EditFormData } from '@/types/hostel';
 
 // Parse hostel data from database format
 export const parseHostelData = (hostel: HostelDataFromDB) => {
+  let galleryImages: string[] = [];
+  try {
+    galleryImages = (hostel.galleryImages ? JSON.parse(hostel.galleryImages) : []) as string[];
+  } catch (error) {
+    console.error('Error parsing galleryImages:', error);
+    galleryImages = [];
+  }
+  
+  let roomTypes: Array<{type: string; available: boolean; price: number}> = [];
+  try {
+    roomTypes = (hostel.roomTypes ? JSON.parse(hostel.roomTypes) : []) as Array<{type: string; available: boolean; price: number}>;
+  } catch (error) {
+    console.error('Error parsing roomTypes:', error);
+    roomTypes = [];
+  }
+  
+  let facilities: string[] = [];
+  try {
+    facilities = (hostel.facilities ? JSON.parse(hostel.facilities) : []) as string[];
+  } catch (error) {
+    console.error('Error parsing facilities:', error);
+    facilities = [];
+  }
+  
   return {
-    roomTypes: (hostel.roomTypes ? JSON.parse(hostel.roomTypes) : []) as Array<{type: string; available: boolean; price: number}>,
-    facilities: (hostel.facilities ? JSON.parse(hostel.facilities) : []) as string[],
-    galleryImages: (hostel.galleryImages ? JSON.parse(hostel.galleryImages) : []) as string[]
+    roomTypes,
+    facilities,
+    galleryImages
   };
 };
 

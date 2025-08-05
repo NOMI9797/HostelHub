@@ -220,7 +220,7 @@ export default function HostelEditForm({
                   {editForm.galleryImages.map((imageId, index) => (
                     <div key={index} className="relative group">
                       <img
-                        src={imageId.startsWith('http') ? imageId : HostelService.getFileUrl(imageId)}
+                        src={imageId.startsWith('http') ? imageId : `/api/images/${imageId}`}
                         alt={`Gallery ${index + 1}`}
                         className="w-full h-24 object-cover rounded-lg shadow-sm"
                         onError={(e) => {

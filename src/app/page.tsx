@@ -7,7 +7,7 @@ import HostelCard from '@/components/hostel/HostelCard';
 import { useHostels } from '@/hooks/useHostels';
 
 export default function HomePage() {
-  const { hostels, loading, searchHostels, clearSearch, refetch } = useHostels();
+  const { hostels, loading, searchHostels, clearSearch } = useHostels();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchLocation, setSearchLocation] = useState('');
   const [isFiltered, setIsFiltered] = useState(false);
@@ -35,9 +35,9 @@ export default function HomePage() {
   };
 
   // Manual refresh function for cache invalidation (available for future use)
-  const handleRefresh = async () => {
-    await refetch();
-  };
+  // const handleRefresh = async () => {
+  //   await refetch();
+  // };
 
 
 

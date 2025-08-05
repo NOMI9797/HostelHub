@@ -297,6 +297,9 @@ export class HostelService {
       if (updates.facilities) {
         updateData.facilities = JSON.stringify(updates.facilities);
       }
+      if (updates.galleryImages) {
+        updateData.galleryImages = JSON.stringify(updates.galleryImages);
+      }
 
       const response = await databases.updateDocument(
         DATABASE_ID,

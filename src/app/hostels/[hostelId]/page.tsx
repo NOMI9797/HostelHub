@@ -66,6 +66,7 @@ export default function HostelDetailPage() {
         genderSpecific: editForm.genderSpecific,
         roomTypes: editForm.roomTypes,
         facilities: editForm.facilities,
+        galleryImages: editForm.galleryImages,
       };
 
       await HostelService.updateHostel(hostel.hostelId!, updatedHostel);

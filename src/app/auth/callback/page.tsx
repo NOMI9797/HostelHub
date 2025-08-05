@@ -36,7 +36,7 @@ export default function AuthCallback() {
       let userData = null;
       try {
         userData = await authService.getUserData(user.$id);
-      } catch (error) {
+      } catch {
         console.log('User document not found, will create it now');
       }
       

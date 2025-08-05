@@ -317,7 +317,7 @@ export default function HostelListerPanel({ user }: HostelListerPanelProps) {
                     <div key={hostel.hostelId} className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-200">
                       <div className="relative">
                         <img
-                          src={hostel.mainPhoto.startsWith('http') ? hostel.mainPhoto : HostelService.getFileUrl(hostel.mainPhoto)}
+                          src={hostel.mainPhoto.startsWith('http') ? hostel.mainPhoto : `/api/images/${hostel.mainPhoto}`}
                           alt={hostel.hostelName}
                           className="w-full h-48 object-cover"
                           onError={(e) => {
