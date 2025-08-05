@@ -58,9 +58,9 @@ export const authService = {
         `${window.location.origin}/auth/callback`
       );
       return session;
-    } catch (error) {
-      console.error('Google OAuth error:', error);
-      throw error;
+    } catch {
+      console.error('Google OAuth error');
+      throw new Error('Google OAuth failed');
     }
   },
 
@@ -69,7 +69,7 @@ export const authService = {
     try {
       const user = await account.get();
       return user;
-    } catch (error) {
+    } catch {
       return null;
     }
   },
@@ -99,8 +99,8 @@ export const authService = {
       
       console.log('No user document found for userId:', userId);
       return null;
-    } catch (error) {
-      console.error('Error fetching user data:', error);
+    } catch {
+      console.error('Error fetching user data');
       return null;
     }
   },
@@ -124,9 +124,9 @@ export const authService = {
       );
       console.log('User document created successfully:', userData);
       return userData;
-    } catch (error) {
-      console.error('Error creating user document:', error);
-      throw error;
+    } catch {
+      console.error('Error creating user document');
+      throw new Error('Failed to create user document');
     }
   },
 
@@ -134,8 +134,8 @@ export const authService = {
   async signOut() {
     try {
       await account.deleteSession('current');
-    } catch (error) {
-      console.error('Sign out error:', error);
+    } catch {
+      console.error('Sign out error');
     }
   },
 
@@ -144,7 +144,7 @@ export const authService = {
     try {
       const user = await account.get();
       return !!user;
-    } catch (error) {
+    } catch {
       return false;
     }
   },

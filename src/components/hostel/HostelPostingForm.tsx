@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { HostelService, HostelData, RoomType } from '@/lib/hostel-service';
+import CacheInvalidationService from '@/lib/cache-invalidation';
 import { 
   Building2, 
   Camera, 
@@ -81,7 +82,7 @@ export default function HostelPostingForm() {
     genderSpecific: 'co-ed' as 'boys' | 'girls' | 'co-ed',
   });
 
-  // File upload states
+  // File upload states - used for form validation and display
   const [mainPhotoFile, setMainPhotoFile] = useState<File | null>(null);
   const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -339,6 +340,9 @@ export default function HostelPostingForm() {
 
 
       await HostelService.createHostel(hostelData);
+      
+      // Invalidate cache for all hostels since a new one was created
+      CacheInvalidationService.invalidateOnHostelCreate();
       
       setMessage('Hostel posted successfully! Redirecting to your listings...');
       

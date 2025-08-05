@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import CachedApiService from '@/lib/cached-api';
 
 export interface HostelDetails {
   hostelId: string;
@@ -25,12 +26,14 @@ interface UseHostelReturn {
   loading: boolean;
   error: string | null;
   refetch: () => Promise<void>;
+  cacheStats?: { fromCache: boolean; timestamp: number };
 }
 
 export const useHostel = (hostelId: string): UseHostelReturn => {
   const [hostel, setHostel] = useState<HostelDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [cacheStats, setCacheStats] = useState<{ fromCache: boolean; timestamp: number } | undefined>();
 
   const fetchHostel = useCallback(async () => {
     if (!hostelId) {
@@ -43,16 +46,16 @@ export const useHostel = (hostelId: string): UseHostelReturn => {
       setLoading(true);
       setError(null);
       
-      const response = await fetch(`/api/hostels/${hostelId}`);
-      if (!response.ok) {
-        if (response.status === 404) {
-          throw new Error('Hostel not found');
-        }
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      const response = await CachedApiService.getHostel(hostelId);
+      setHostel(response.data);
+      setCacheStats({ fromCache: response.fromCache, timestamp: response.timestamp });
       
-      const data = await response.json();
-      setHostel(data);
+      // Log cache performance
+      if (response.fromCache) {
+        console.log('🚀 Hostel details loaded from cache');
+      } else {
+        console.log('📡 Hostel details fetched from API');
+      }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch hostel details';
       setError(errorMessage);
@@ -74,6 +77,7 @@ export const useHostel = (hostelId: string): UseHostelReturn => {
     hostel,
     loading,
     error,
-    refetch
+    refetch,
+    cacheStats
   };
 }; 

@@ -181,7 +181,7 @@ export class HostelService {
           createdAt: doc.$createdAt as string,
           updatedAt: doc.$updatedAt as string
         }));
-      } catch (publicError) {
+      } catch {
         console.log('Public access failed, trying authenticated access...');
         
         // Fallback to authenticated access
@@ -247,7 +247,7 @@ export class HostelService {
         }
         
         return response.documents[0] as unknown as HostelResponse;
-      } catch (publicError) {
+      } catch {
         console.log('Public access failed for hostel details, trying authenticated access...');
         
         // Fallback to authenticated access
@@ -376,7 +376,7 @@ export class HostelService {
           DATABASE_ID,
           COLLECTION_HOSTELS
         );
-      } catch (publicError) {
+      } catch {
         console.log('Public access failed for search, trying authenticated access...');
         response = await databases.listDocuments(
           DATABASE_ID,

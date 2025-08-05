@@ -2,12 +2,11 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
-import { UserRole } from '@/lib/appwrite';
-import { Home as HomeIcon, Globe, Menu, Sparkles, CheckCircle } from 'lucide-react';
+import { Home as HomeIcon, Globe, Menu, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 
 export default function Header() {
-  const { user, loading, isAuthenticated, signOut } = useAuth();
+  const { loading, isAuthenticated, signOut } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleSignOut = async () => {

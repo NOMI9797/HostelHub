@@ -13,6 +13,7 @@ import HostelEditForm from '@/components/hostel/HostelEditForm';
 import { HostelDataFromDB, EditFormData } from '@/types/hostel';
 import { parseHostelData, initializeEditForm } from '@/utils/hostel-utils';
 import { useHostel } from '@/hooks/useHostel';
+import CacheInvalidationService from '@/lib/cache-invalidation';
 
 export default function HostelDetailPage() {
   const params = useParams();
@@ -69,6 +70,9 @@ export default function HostelDetailPage() {
 
       await HostelService.updateHostel(hostel.hostelId!, updatedHostel);
       
+      // Invalidate cache for this hostel and all hostels
+      CacheInvalidationService.invalidateOnHostelUpdate(hostel.hostelId!);
+      
       // Refetch hostel data to update the UI
       await refetch();
       setIsEditing(false);
@@ -93,6 +97,10 @@ export default function HostelDetailPage() {
 
     try {
       await HostelService.deleteHostel(hostel.hostelId!);
+      
+      // Invalidate cache for this hostel and all hostels
+      CacheInvalidationService.invalidateOnHostelDelete(hostel.hostelId!);
+      
       router.push('/dashboard');
     } catch (error) {
       console.error('Error deleting hostel:', error);

@@ -20,6 +20,7 @@ import {
 import { useRouter } from 'next/navigation';
 import Header from '@/components/layout/Header';
 import { HostelService, HostelResponse } from '@/lib/hostel-service';
+import CacheInvalidationService from '@/lib/cache-invalidation';
 
 interface HostelListerPanelProps {
   user: {
@@ -85,6 +86,10 @@ export default function HostelListerPanel({ user }: HostelListerPanelProps) {
 
     try {
       await HostelService.deleteHostel(hostelId);
+      
+      // Invalidate cache for this hostel and all hostels
+      CacheInvalidationService.invalidateOnHostelDelete(hostelId);
+      
       // Refresh the list after deletion
       fetchPostedHostels();
     } catch (error) {

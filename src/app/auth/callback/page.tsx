@@ -78,8 +78,8 @@ export default function AuthCallback() {
         window.location.href = '/dashboard';
       }, 2000);
 
-    } catch (error) {
-      console.error('Auth callback error:', error);
+    } catch {
+      console.error('Auth callback error');
       setStatus('error');
       setMessage('Authentication failed. Please try again.');
     }

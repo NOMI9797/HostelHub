@@ -44,15 +44,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 lastActivity: Date.now(),
               });
             }
-          } catch (error) {
+          } catch {
             console.log('User document not found, will be created during first login');
           }
         }
       } else {
         setUser(null);
       }
-    } catch (error) {
-      console.error('Auth check error:', error);
+    } catch {
+      console.error('Auth check error');
     } finally {
       setLoading(false);
     }
@@ -66,8 +66,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const userData = await authService.getUserData(currentUser.$id);
         setUser(userData);
       }
-    } catch (error) {
-      console.error('Error refreshing user data:', error);
+    } catch {
+      console.error('Error refreshing user data');
     }
   }, []);
 
@@ -81,8 +81,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       // Clear session data
       clearSession();
-    } catch (error) {
-      console.error('Sign out error:', error);
+    } catch {
+      console.error('Sign out error');
     }
   }, []);
 
@@ -93,9 +93,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await authService.signUpWithGoogle(role);
       // After successful OAuth, check auth status again
       await checkAuthStatus();
-    } catch (error) {
-      console.error('Sign up error:', error);
-      throw error;
+    } catch {
+      console.error('Sign up error');
+      throw new Error('Sign up failed');
     }
   }, [checkAuthStatus]);
 

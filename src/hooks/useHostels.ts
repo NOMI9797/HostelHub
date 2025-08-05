@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import CachedApiService from '@/lib/cached-api';
 
 export interface Hostel {
   hostelId: string;
@@ -27,6 +28,7 @@ interface UseHostelsReturn {
   refetch: () => Promise<void>;
   searchHostels: (query: string, location: string) => Promise<void>;
   clearSearch: () => void;
+  cacheStats?: { fromCache: boolean; timestamp: number };
 }
 
 export const useHostels = (): UseHostelsReturn => {
@@ -34,20 +36,24 @@ export const useHostels = (): UseHostelsReturn => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [originalHostels, setOriginalHostels] = useState<Hostel[]>([]);
+  const [cacheStats, setCacheStats] = useState<{ fromCache: boolean; timestamp: number } | undefined>();
 
   const fetchHostels = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
       
-      const response = await fetch('/api/hostels');
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      const response = await CachedApiService.getHostels();
+      setHostels(response.data);
+      setOriginalHostels(response.data);
+      setCacheStats({ fromCache: response.fromCache, timestamp: response.timestamp });
       
-      const data = await response.json();
-      setHostels(data);
-      setOriginalHostels(data);
+      // Log cache performance
+      if (response.fromCache) {
+        console.log('🚀 Hostels loaded from cache');
+      } else {
+        console.log('📡 Hostels fetched from API');
+      }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch hostels';
       setError(errorMessage);
@@ -67,22 +73,16 @@ export const useHostels = (): UseHostelsReturn => {
         return;
       }
 
-      const filteredHostels = originalHostels.filter((hostel) => {
-        const matchesQuery = !query || 
-          hostel.hostelName.toLowerCase().includes(query.toLowerCase()) ||
-          hostel.description.toLowerCase().includes(query.toLowerCase()) ||
-          hostel.city.toLowerCase().includes(query.toLowerCase()) ||
-          hostel.area.toLowerCase().includes(query.toLowerCase());
-        
-        const matchesLocation = !location ||
-          hostel.city.toLowerCase().includes(location.toLowerCase()) ||
-          hostel.area.toLowerCase().includes(location.toLowerCase()) ||
-          hostel.nearbyLandmark.toLowerCase().includes(location.toLowerCase());
-        
-        return matchesQuery && matchesLocation;
-      });
-
-      setHostels(filteredHostels);
+      const response = await CachedApiService.searchHostels(query, location);
+      setHostels(response.data);
+      setCacheStats({ fromCache: response.fromCache, timestamp: response.timestamp });
+      
+      // Log cache performance
+      if (response.fromCache) {
+        console.log('🚀 Search results loaded from cache');
+      } else {
+        console.log('📡 Search results fetched from API');
+      }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to search hostels';
       setError(errorMessage);
@@ -110,6 +110,7 @@ export const useHostels = (): UseHostelsReturn => {
     error,
     refetch,
     searchHostels,
-    clearSearch
+    clearSearch,
+    cacheStats
   };
 }; 
