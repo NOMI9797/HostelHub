@@ -180,15 +180,15 @@ export default function HostelDetailPage() {
   const { roomTypes, facilities, galleryImages } = parseHostelData(hostel);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
       <Header />
       
-      <div>
-        {/* Page Header */}
+      <div className="relative">
+        {/* Simple Professional Page Header */}
         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-200">
           <div className="max-w-7xl mx-auto px-6 py-8">
-            <div className="flex items-center justify-between">
-              <div>
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+              <div className="mb-6 lg:mb-0">
                 <div className="flex items-center space-x-3 mb-3">
                   <Link 
                     href="/"
@@ -204,7 +204,7 @@ export default function HostelDetailPage() {
               
               {/* Action Buttons (Owner Only) */}
               {isOwner && isFromDashboard && (
-                <div className="flex space-x-3">
+                <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
                   {!isEditing ? (
                     <>
                       <button
@@ -247,82 +247,137 @@ export default function HostelDetailPage() {
           </div>
         </div>
         
-        {/* Main Content */}
-        <div className="max-w-7xl mx-auto px-6 py-8">
-          <div className={`grid grid-cols-1 ${isEditing ? 'lg:grid-cols-1' : 'lg:grid-cols-3'} gap-8`}>
+        {/* Main Content with Enhanced Layout */}
+        <div className="max-w-7xl mx-auto px-6 py-12">
+          <div className={`grid grid-cols-1 ${isEditing ? 'lg:grid-cols-1' : 'lg:grid-cols-3'} gap-12`}>
             {/* Left Column - Images and Details */}
-            <div className={`${isEditing ? 'lg:col-span-1' : 'lg:col-span-2'} space-y-6`}>
-              {/* Gallery Component */}
-              <HostelGallery 
-                mainPhoto={hostel.mainPhoto}
-                galleryImages={galleryImages}
-                hostelName={hostel.hostelName}
-              />
+            <div className={`${isEditing ? 'lg:col-span-1' : 'lg:col-span-2'} space-y-8`}>
+              {/* Gallery Component with Enhanced Styling */}
+              <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                <HostelGallery 
+                  mainPhoto={hostel.mainPhoto}
+                  galleryImages={galleryImages}
+                  hostelName={hostel.hostelName}
+                />
+              </div>
 
-              {/* Hostel Details Component */}
-              <HostelDetails 
-                hostel={hostel}
-                roomTypes={roomTypes}
-                facilities={facilities}
-              />
+              {/* Hostel Details Component with Enhanced Styling */}
+              <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                <HostelDetails 
+                  hostel={hostel}
+                  roomTypes={roomTypes}
+                  facilities={facilities}
+                />
+              </div>
             </div>
 
             {/* Right Column - Contact & Booking (Only when not editing) */}
             {!isEditing && (
-              <div className="space-y-6">
-                {/* Contact Information */}
-                <div className="bg-white rounded-xl border border-gray-200 p-6">
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">Contact & Booking</h3>
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                        <span className="text-blue-600 font-bold">
+              <div className="space-y-8">
+                {/* Enhanced Contact Information */}
+                <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <span className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                      <span className="text-blue-600 font-bold text-sm">📞</span>
+                    </span>
+                    Contact & Booking
+                  </h3>
+                  <div className="space-y-6">
+                    <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl">
+                      <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
+                        <span className="text-white font-bold text-lg">
                           {hostel.ownerName.charAt(0).toUpperCase()}
                         </span>
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">{hostel.ownerName}</p>
-                        <p className="text-sm text-gray-600">Hostel Owner</p>
+                        <p className="font-bold text-gray-900 text-lg">{hostel.ownerName}</p>
+                        <p className="text-gray-600">Hostel Owner</p>
                       </div>
                     </div>
                     
-                    <div className="space-y-2">
-                      <div className="flex items-center space-x-2 text-gray-600">
-                        <span className="text-sm">📞</span>
-                        <span className="text-sm">{hostel.ownerPhone}</span>
+                    <div className="space-y-4">
+                      <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                        <span className="text-blue-600 text-lg">📞</span>
+                        <div>
+                          <p className="text-sm text-gray-600">Phone Number</p>
+                          <p className="font-semibold text-gray-900">{hostel.ownerPhone}</p>
+                        </div>
                       </div>
-                      <div className="flex items-center space-x-2 text-gray-600">
-                        <span className="text-sm">📧</span>
-                        <span className="text-sm">{hostel.ownerEmail}</span>
+                      <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                        <span className="text-blue-600 text-lg">📧</span>
+                        <div>
+                          <p className="text-sm text-gray-600">Email Address</p>
+                          <p className="font-semibold text-gray-900">{hostel.ownerEmail}</p>
+                        </div>
                       </div>
                     </div>
 
-                    <button className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold">
+                    <button className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-bold text-lg shadow-lg transform hover:scale-105">
                       Contact Owner
                     </button>
                   </div>
                 </div>
 
-                {/* Quick Info */}
-                <div className="bg-white rounded-xl border border-gray-200 p-6">
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Info</h3>
-                  <div className="space-y-3">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Location</span>
-                      <span className="font-medium text-gray-900">{hostel.city}, {hostel.area}</span>
+                {/* Enhanced Quick Info */}
+                <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <span className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                      <span className="text-green-600 font-bold text-sm">ℹ️</span>
+                    </span>
+                    Quick Info
+                  </h3>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                      <span className="text-gray-600 font-medium">Location</span>
+                      <span className="font-bold text-gray-900 text-right max-w-[60%]">
+                        {hostel.city}, {hostel.area}
+                        {hostel.nearbyLandmark && (
+                          <div className="text-sm text-gray-600 font-normal mt-1">
+                            Near {hostel.nearbyLandmark}
+                          </div>
+                        )}
+                      </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Gender</span>
-                      <span className="font-medium text-gray-900">
+                    <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                      <span className="text-gray-600 font-medium">Gender</span>
+                      <span className="font-bold text-gray-900">
                         {hostel.genderSpecific === 'co-ed' ? 'Co-ed' : 
                          hostel.genderSpecific === 'boys' ? 'Boys' : 'Girls'}
                       </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Starting Price</span>
-                      <span className="font-medium text-blue-600">
+                    <div className="flex justify-between items-center p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
+                      <span className="text-gray-600 font-medium">Starting Price</span>
+                      <span className="font-bold text-blue-600 text-lg">
                         PKR {Math.min(...roomTypes.map(rt => rt.price || 0)).toLocaleString()}
                       </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Additional Features Section */}
+                <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <span className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                      <span className="text-purple-600 font-bold text-sm">⭐</span>
+                    </span>
+                    Why Choose This Hostel?
+                  </h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <span className="text-gray-700">Prime location near universities</span>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <span className="text-gray-700">24/7 security and maintenance</span>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <span className="text-gray-700">High-speed internet included</span>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <span className="text-gray-700">Flexible payment options</span>
                     </div>
                   </div>
                 </div>
@@ -332,13 +387,15 @@ export default function HostelDetailPage() {
 
           {/* Edit Form Component */}
           {isEditing && editForm && (
-            <HostelEditForm
-              editForm={editForm}
-              setEditForm={setEditForm}
-              onSave={handleSave}
-              onCancel={handleCancel}
-              saving={saving}
-            />
+            <div className="mt-12">
+              <HostelEditForm
+                editForm={editForm}
+                setEditForm={setEditForm}
+                onSave={handleSave}
+                onCancel={handleCancel}
+                saving={saving}
+              />
+            </div>
           )}
         </div>
       </div>

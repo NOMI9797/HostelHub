@@ -130,39 +130,30 @@ export default function HostelCard({ hostel }: HostelCardProps) {
             </span>
           </div>
 
-          {/* Price and Facilities */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
+          {/* Price Row */}
+          <div className="mb-4">
+            {lowestPrice > 0 ? (
               <div className="flex items-center space-x-2">
-                {lowestPrice > 0 ? (
-                  <>
-                    <span className="text-2xl font-bold text-blue-600">
-                      PKR {lowestPrice.toLocaleString()}
-                    </span>
-                    <span className="text-sm text-gray-500">/month</span>
-                    <span className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">starting</span>
-                  </>
-                ) : availableRoomTypes > 0 ? (
-                  <span className="text-lg text-gray-700 font-semibold">
-                    Prices vary by room type
-                  </span>
-                ) : (
-                  <span className="text-lg text-gray-700 font-semibold">
-                    Contact for pricing
-                  </span>
-                )}
-              </div>
-              
-              <div className="flex items-center space-x-2 bg-gray-50 px-3 py-2 rounded-lg">
-                <Building2 className="w-4 h-4 text-gray-600" />
-                <span className="text-sm text-gray-700 font-medium">
-                  {facilityCount} facilities
+                <span className="text-2xl font-bold text-gray-900">
+                  PKR {lowestPrice.toLocaleString()}
                 </span>
+                <span className="text-sm text-gray-500">/month</span>
+                <span className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">starting</span>
               </div>
-            </div>
+            ) : availableRoomTypes > 0 ? (
+              <span className="text-lg text-gray-900 font-semibold">
+                Prices vary by room type
+              </span>
+            ) : (
+              <span className="text-lg text-gray-900 font-semibold">
+                Contact for pricing
+              </span>
+            )}
+          </div>
 
-            {/* Room Types Available */}
-            <div className="flex items-center space-x-2 pt-3 border-t border-gray-100">
+          {/* Facilities and Room Types Row */}
+          <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+            <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center">
                 <Users className="w-4 h-4 text-green-600" />
               </div>
@@ -174,6 +165,13 @@ export default function HostelCard({ hostel }: HostelCardProps) {
                 ) : (
                   'No room types configured'
                 )}
+              </span>
+            </div>
+            
+            <div className="flex items-center space-x-2 bg-gray-50 px-3 py-2 rounded-lg">
+              <Building2 className="w-4 h-4 text-gray-600" />
+              <span className="text-sm text-gray-700 font-medium">
+                {facilityCount} facilities
               </span>
             </div>
           </div>
