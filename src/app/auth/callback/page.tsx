@@ -55,19 +55,12 @@ export default function AuthCallback() {
           
           // Clear the stored role
           sessionStorage.removeItem('selectedRole');
-        } catch (createError) {
-          console.error('Failed to create user document:', createError);
-          console.error('Error details:', {
-            userId: user.$id,
-            email: user.email,
-            selectedRole: sessionStorage.getItem('selectedRole'),
-            databaseId: process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID,
-            collectionId: process.env.NEXT_PUBLIC_COLLECTION_USERS
-          });
-          setStatus('error');
-          setMessage(`Failed to create user profile: ${(createError as Error).message || 'Unknown error'}`);
-          return;
-        }
+              } catch {
+        console.error('Failed to create user document');
+        setStatus('error');
+        setMessage('Failed to create user profile. Please try again.');
+        return;
+      }
       }
 
       setStatus('success');

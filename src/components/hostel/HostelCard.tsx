@@ -3,6 +3,12 @@
 import { Building2, MapPin, Users } from 'lucide-react';
 import Link from 'next/link';
 
+interface RoomType {
+  type: string;
+  price: number;
+  available: boolean;
+}
+
 interface HostelCardProps {
   hostel: {
     hostelId: string;
@@ -27,15 +33,48 @@ const getFileUrl = (fileId: string) => {
 };
 
 export default function HostelCard({ hostel }: HostelCardProps) {
-  // Parse room types to get the lowest price
-  const roomTypes = JSON.parse(hostel.roomTypes || '[]') as Array<{price: number; available: boolean}>;
-  const lowestPrice = roomTypes.length > 0 
-    ? Math.min(...roomTypes.map((rt) => rt.price || 0))
-    : 0;
+  // Parse room types to get the lowest available price
+  let roomTypes: RoomType[] = [];
+  let lowestPrice = 0;
+  let availableRoomTypes = 0;
+  
+  try {
+    roomTypes = JSON.parse(hostel.roomTypes || '[]');
+    
+    // Filter only available rooms and get the lowest price
+    const availableRooms = roomTypes.filter((rt: RoomType) => rt.available && rt.price > 0);
+    availableRoomTypes = availableRooms.length;
+    
+    if (availableRooms.length > 0) {
+      lowestPrice = Math.min(...availableRooms.map((rt: RoomType) => rt.price));
+      
+      // Check if all prices are default prices (indicating they haven't been customized)
+      const defaultPrices = [15000, 12000, 10000, 8000];
+      const allDefaultPrices = availableRooms.every(rt => defaultPrices.includes(rt.price));
+      
+      if (allDefaultPrices) {
+        // If all prices are default, don't show a specific price
+        lowestPrice = 0;
+      }
+    }
+  } catch (error) {
+    console.error('Error parsing room types for', hostel.hostelName, ':', error);
+    roomTypes = [];
+    availableRoomTypes = 0;
+  }
 
   // Parse facilities to count them
-  const facilities = JSON.parse(hostel.facilities || '[]') as string[];
-  const facilityCount = facilities.length;
+  let facilities: string[] = [];
+  let facilityCount = 0;
+  
+  try {
+    facilities = JSON.parse(hostel.facilities || '[]');
+    facilityCount = facilities.length;
+  } catch (error) {
+    console.error('Error parsing facilities:', error);
+    facilities = [];
+    facilityCount = 0;
+  }
 
   return (
     <Link href={`/hostels/${hostel.hostelId}`}>
@@ -77,10 +116,23 @@ export default function HostelCard({ hostel }: HostelCardProps) {
           {/* Price and Facilities */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
             <div className="flex items-center space-x-2">
-              <span className="text-lg font-bold text-blue-600">
-                PKR {lowestPrice.toLocaleString()}
-              </span>
-              <span className="text-sm text-gray-500">/month</span>
+              {lowestPrice > 0 ? (
+                <>
+                  <span className="text-lg font-bold text-blue-600">
+                    PKR {lowestPrice.toLocaleString()}
+                  </span>
+                  <span className="text-sm text-gray-500">/month</span>
+                  <span className="text-xs text-gray-400">(starting)</span>
+                </>
+              ) : availableRoomTypes > 0 ? (
+                <span className="text-sm text-gray-500 font-medium">
+                  Prices vary by room type
+                </span>
+              ) : (
+                <span className="text-sm text-gray-500 font-medium">
+                  Contact for pricing
+                </span>
+              )}
             </div>
             
             <div className="flex items-center space-x-1">
@@ -92,14 +144,20 @@ export default function HostelCard({ hostel }: HostelCardProps) {
           </div>
 
           {/* Room Types Available */}
-                          <div className="mt-3 pt-3 border-t border-gray-100">
-                  <div className="flex items-center space-x-2">
-                    <Users className="w-4 h-4 text-gray-500" />
-                    <span className="text-sm text-gray-600">
-                      {roomTypes.filter((rt) => rt.available).length} room types available
-                    </span>
-                  </div>
-                </div>
+          <div className="mt-3 pt-3 border-t border-gray-100">
+            <div className="flex items-center space-x-2">
+              <Users className="w-4 h-4 text-gray-500" />
+              <span className="text-sm text-gray-600">
+                {availableRoomTypes > 0 ? (
+                  `${availableRoomTypes} room type${availableRoomTypes !== 1 ? 's' : ''} available`
+                ) : roomTypes.length > 0 ? (
+                  'Rooms not currently available'
+                ) : (
+                  'No room types configured'
+                )}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </Link>

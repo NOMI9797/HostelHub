@@ -34,10 +34,12 @@ export default function HomePage() {
     clearSearch();
   };
 
-  // Manual refresh function for cache invalidation
+  // Manual refresh function for cache invalidation (available for future use)
   const handleRefresh = async () => {
     await refetch();
   };
+
+
 
   return (
     <div className="min-h-screen bg-white">

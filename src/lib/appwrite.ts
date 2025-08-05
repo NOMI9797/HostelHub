@@ -52,6 +52,7 @@ export const authService = {
   // Sign up with Google OAuth
   async signUpWithGoogle(role: UserRole) {
     try {
+      // Role is stored in sessionStorage and used in auth callback
       const session = await account.createOAuth2Session(
         OAuthProvider.Google,
         `${window.location.origin}/auth/callback`,
@@ -154,9 +155,9 @@ export const authService = {
     try {
       const session = await account.updateSession('current');
       return session;
-    } catch (error) {
-      console.error('Session refresh error:', error);
-      throw error;
+    } catch {
+      console.error('Session refresh error');
+      throw new Error('Session refresh failed');
     }
   },
 
@@ -165,7 +166,7 @@ export const authService = {
     try {
       const session = await account.getSession('current');
       return session;
-    } catch (error) {
+    } catch {
       return null;
     }
   }
