@@ -113,8 +113,19 @@ export default function HostelDetailPage() {
     return (
       <div className="min-h-screen bg-white">
         <Header />
-        <div className="pt-16">
-          <div className="max-w-5xl mx-auto p-6">
+        <div>
+          {/* Page Header */}
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-200">
+            <div className="max-w-7xl mx-auto px-6 py-8">
+              <div className="text-center">
+                <h1 className="text-3xl font-bold text-gray-900 mb-3">Loading Hostel Details</h1>
+                <p className="text-gray-600 text-lg">Please wait while we fetch the information.</p>
+              </div>
+            </div>
+          </div>
+          
+          {/* Loading Content */}
+          <div className="max-w-7xl mx-auto px-6 py-8">
             <div className="text-center py-12">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
                 <Building2 className="w-8 h-8 text-blue-600 animate-pulse" />
@@ -132,8 +143,19 @@ export default function HostelDetailPage() {
     return (
       <div className="min-h-screen bg-white">
         <Header />
-        <div className="pt-16">
-          <div className="max-w-5xl mx-auto p-6">
+        <div>
+          {/* Page Header */}
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-200">
+            <div className="max-w-7xl mx-auto px-6 py-8">
+              <div className="text-center">
+                <h1 className="text-3xl font-bold text-gray-900 mb-3">Hostel Not Found</h1>
+                <p className="text-gray-600 text-lg">The hostel you are looking for does not exist.</p>
+              </div>
+            </div>
+          </div>
+          
+          {/* Error Content */}
+          <div className="max-w-7xl mx-auto px-6 py-8">
             <div className="text-center py-12">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 rounded-full mb-4">
                 <Building2 className="w-8 h-8 text-red-600" />
@@ -161,62 +183,72 @@ export default function HostelDetailPage() {
     <div className="min-h-screen bg-white">
       <Header />
       
-      <div className="pt-16">
-        <div className="max-w-5xl mx-auto p-6">
-          {/* Back Button */}
-          <div className="mb-6">
-            <Link 
-              href="/"
-              className="inline-flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Back to Hostels</span>
-            </Link>
-          </div>
-
-          {/* Action Buttons (Owner Only) */}
-          {isOwner && isFromDashboard && (
-            <div className="flex justify-end mb-6">
-              {!isEditing ? (
-                <div className="flex space-x-3">
-                  <button
-                    onClick={handleEdit}
-                    className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+      <div>
+        {/* Page Header */}
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-200">
+          <div className="max-w-7xl mx-auto px-6 py-8">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="flex items-center space-x-3 mb-3">
+                  <Link 
+                    href="/"
+                    className="inline-flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
                   >
-                    <Edit className="w-4 h-4" />
-                    <span>Edit</span>
-                  </button>
-                  <button
-                    onClick={handleDelete}
-                    className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                    <span>Delete</span>
-                  </button>
+                    <ArrowLeft className="w-4 h-4" />
+                    <span>Back to Hostels</span>
+                  </Link>
                 </div>
-              ) : (
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">{hostel.hostelName}</h1>
+                <p className="text-gray-600 text-lg">{hostel.city}, {hostel.area}</p>
+              </div>
+              
+              {/* Action Buttons (Owner Only) */}
+              {isOwner && isFromDashboard && (
                 <div className="flex space-x-3">
-                  <button
-                    onClick={handleSave}
-                    disabled={saving}
-                    className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
-                  >
-                    <Save className="w-4 h-4" />
-                    <span>{saving ? 'Saving...' : 'Save'}</span>
-                  </button>
-                  <button
-                    onClick={handleCancel}
-                    className="flex items-center space-x-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
-                  >
-                    <X className="w-4 h-4" />
-                    <span>Cancel</span>
-                  </button>
+                  {!isEditing ? (
+                    <>
+                      <button
+                        onClick={handleEdit}
+                        className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                      >
+                        <Edit className="w-4 h-4" />
+                        <span>Edit</span>
+                      </button>
+                      <button
+                        onClick={handleDelete}
+                        className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        <span>Delete</span>
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={handleSave}
+                        disabled={saving}
+                        className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+                      >
+                        <Save className="w-4 h-4" />
+                        <span>{saving ? 'Saving...' : 'Save'}</span>
+                      </button>
+                      <button
+                        onClick={handleCancel}
+                        className="flex items-center space-x-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                      >
+                        <X className="w-4 h-4" />
+                        <span>Cancel</span>
+                      </button>
+                    </>
+                  )}
                 </div>
               )}
             </div>
-          )}
-
-          {/* Main Content */}
+          </div>
+        </div>
+        
+        {/* Main Content */}
+        <div className="max-w-7xl mx-auto px-6 py-8">
           <div className={`grid grid-cols-1 ${isEditing ? 'lg:grid-cols-1' : 'lg:grid-cols-3'} gap-8`}>
             {/* Left Column - Images and Details */}
             <div className={`${isEditing ? 'lg:col-span-1' : 'lg:col-span-2'} space-y-6`}>
