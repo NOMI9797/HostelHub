@@ -69,11 +69,21 @@ export default function HostelListerPanel({ user }: HostelListerPanelProps) {
     }
   }, [user?.userId]);
 
+  const refreshData = useCallback(() => {
+    fetchPostedHostels();
+  }, [fetchPostedHostels]);
+
   useEffect(() => {
-    if (activeTab === 'posted-hostels') {
+    // Fetch posted hostels when component mounts or when user changes
+    fetchPostedHostels();
+  }, [user?.userId, fetchPostedHostels]);
+
+  // Refresh data when dashboard tab becomes active
+  useEffect(() => {
+    if (activeTab === 'dashboard') {
       fetchPostedHostels();
     }
-  }, [activeTab, user?.userId, fetchPostedHostels]);
+  }, [activeTab, fetchPostedHostels]);
 
   const handleDeleteHostel = async (hostelId: string) => {
     if (!confirm('Are you sure you want to delete this hostel? This action cannot be undone.')) {
@@ -120,9 +130,26 @@ export default function HostelListerPanel({ user }: HostelListerPanelProps) {
                   <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                     <Building2 className="w-6 h-6 text-blue-600" />
                   </div>
-                  <span className="text-sm text-green-600 bg-green-100 px-2 py-1 rounded-full">Active</span>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-green-600 bg-green-100 px-2 py-1 rounded-full">Active</span>
+                    <button 
+                      onClick={refreshData}
+                      className="text-blue-600 hover:text-blue-700 transition-colors"
+                      title="Refresh data"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
-                <div className="text-2xl font-bold text-gray-900 mb-1">{postedHostels.length}</div>
+                <div className="text-2xl font-bold text-gray-900 mb-1">
+                  {loading ? (
+                    <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
+                    postedHostels.length
+                  )}
+                </div>
                 <div className="text-gray-600 text-sm">Active Listings</div>
               </div>
 
