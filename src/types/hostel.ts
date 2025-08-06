@@ -1,4 +1,12 @@
 // Hostel-related type definitions
+
+// Add HostelStatus enum
+export enum HostelStatus {
+  PENDING = 'pending',
+  APPROVED = 'approved',
+  REJECTED = 'rejected'
+}
+
 export interface RoomType {
   type: string;
   available: boolean;
@@ -23,7 +31,11 @@ export interface HostelData {
   roomTypes: RoomType[];
   facilities: string[];
   genderSpecific: 'boys' | 'girls' | 'co-ed';
-  status?: 'active' | 'inactive' | 'pending';
+  status?: HostelStatus;
+  submittedAt?: string;
+  approvedAt?: string;
+  approvedBy?: string;
+  rejectionReason?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -50,6 +62,10 @@ export interface HostelResponse {
   facilities: string;
   genderSpecific: string;
   status: string;
+  submittedAt: string;
+  approvedAt: string;
+  approvedBy: string;
+  rejectionReason: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -70,6 +86,11 @@ export interface HostelListItem {
   facilities: string;
   genderSpecific: string;
   ownerId: string;
+  status: string;
+  submittedAt: string;
+  approvedAt: string;
+  approvedBy: string;
+  rejectionReason: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -93,7 +114,11 @@ export interface HostelDataFromDB {
   roomTypes: string; // JSON string from Appwrite
   facilities: string; // JSON string from Appwrite
   genderSpecific: 'boys' | 'girls' | 'co-ed';
-  status?: 'active' | 'inactive' | 'pending';
+  status?: HostelStatus;
+  submittedAt?: string;
+  approvedAt?: string;
+  approvedBy?: string;
+  rejectionReason?: string;
   createdAt?: string;
   updatedAt?: string;
 }

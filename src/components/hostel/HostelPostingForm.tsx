@@ -2,7 +2,8 @@
 
 import { useState, useRef } from 'react';
 import { useAuth } from '@/lib/auth-context';
-import { HostelService, HostelData, RoomType } from '@/lib/hostel-service';
+import { HostelService } from '@/lib/hostel-service';
+import { HostelData, RoomType } from '@/types/hostel';
 import CacheInvalidationService from '@/lib/cache-invalidation';
 import { 
   Building2, 

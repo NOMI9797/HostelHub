@@ -4,6 +4,7 @@ import { useAuth } from '@/lib/auth-context';
 import { UserRole } from '@/lib/appwrite';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import HostelListerPanel from '@/components/dashboard/HostelListerPanel';
+import AdminDashboard from '@/components/admin/AdminDashboard';
 import { Users } from 'lucide-react';
 import Header from '@/components/layout/Header';
 
@@ -19,10 +20,13 @@ export default function Dashboard() {
   console.log('Dashboard - User data:', user);
   console.log('Dashboard - User role:', user?.role);
   console.log('Dashboard - Is Hostel Lister:', user?.role === UserRole.HOSTEL_LISTER);
+  console.log('Dashboard - Is Super Admin:', user?.role === UserRole.SUPER_ADMIN);
 
   return (
     <ProtectedRoute>
-      {user && user.role === UserRole.HOSTEL_LISTER ? (
+      {user && user.role === UserRole.SUPER_ADMIN ? (
+        <AdminDashboard />
+      ) : user && user.role === UserRole.HOSTEL_LISTER ? (
         <HostelListerPanel user={user} onSignOut={handleSignOut} />
       ) : (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 relative overflow-hidden">

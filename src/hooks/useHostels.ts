@@ -1,6 +1,24 @@
 import { useState, useEffect, useCallback } from 'react';
 import CachedApiService from '@/lib/cached-api';
 
+// Create a simple event system for cache invalidation
+class CacheEventEmitter {
+  private listeners: (() => void)[] = [];
+
+  subscribe(callback: () => void) {
+    this.listeners.push(callback);
+    return () => {
+      this.listeners = this.listeners.filter(listener => listener !== callback);
+    };
+  }
+
+  emit() {
+    this.listeners.forEach(callback => callback());
+  }
+}
+
+export const cacheEventEmitter = new CacheEventEmitter();
+
 export interface Hostel {
   hostelId: string;
   hostelName: string;
@@ -102,6 +120,16 @@ export const useHostels = (): UseHostelsReturn => {
 
   useEffect(() => {
     fetchHostels();
+  }, [fetchHostels]);
+
+  // Listen for cache invalidation events
+  useEffect(() => {
+    const unsubscribe = cacheEventEmitter.subscribe(() => {
+      console.log('🔄 Cache invalidated, refetching hostels...');
+      fetchHostels();
+    });
+
+    return unsubscribe;
   }, [fetchHostels]);
 
   return {

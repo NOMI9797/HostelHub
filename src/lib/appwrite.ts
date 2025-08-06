@@ -16,7 +16,8 @@ export const COLLECTION_ID = process.env.NEXT_PUBLIC_COLLECTION_USERS!;
 // User roles
 export enum UserRole {
   HOSTEL_LISTER = 'HostelLister',
-  ROOM_SEEKER = 'RoomSeeker'
+  ROOM_SEEKER = 'RoomSeeker',
+  SUPER_ADMIN = 'SuperAdmin'
 }
 
 // User interface

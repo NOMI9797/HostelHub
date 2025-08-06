@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
-import { Home as HomeIcon, Menu, Users, MessageSquare } from 'lucide-react';
+import { UserRole } from '@/lib/appwrite';
+import { Home as HomeIcon, Menu, Users, MessageSquare, Shield } from 'lucide-react';
 import Link from 'next/link';
 
 export default function Header() {
@@ -37,10 +38,20 @@ export default function Header() {
                 <span>Home</span>
               </Link>
               {!loading && isAuthenticated && (
-                <Link href="/dashboard" className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-blue-600 font-medium transition-colors">
-                  <HomeIcon className="w-4 h-4" />
-                  <span>Dashboard</span>
-                </Link>
+                <>
+                  {user?.role !== UserRole.SUPER_ADMIN && (
+                    <Link href="/dashboard" className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-blue-600 font-medium transition-colors">
+                      <HomeIcon className="w-4 h-4" />
+                      <span>Dashboard</span>
+                    </Link>
+                  )}
+                  {user?.role === UserRole.SUPER_ADMIN && (
+                    <Link href="/admin" className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-purple-600 font-medium transition-colors">
+                      <Shield className="w-4 h-4" />
+                      <span>Admin</span>
+                    </Link>
+                  )}
+                </>
               )}
               
               <Link href="/about" className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-blue-600 font-medium transition-colors">
@@ -132,12 +143,24 @@ export default function Header() {
                 </Link>
 
                 {!loading && isAuthenticated && (
-                  <Link href="/dashboard" className="flex items-center space-x-4 text-gray-700 hover:text-blue-600 font-semibold transition-all duration-300 p-3 rounded-xl hover:bg-purple-50">
-                    <div className="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center">
-                      <HomeIcon className="w-5 h-5" />
-                    </div>
-                    <span>Dashboard</span>
-                  </Link>
+                  <>
+                    {user?.role !== UserRole.SUPER_ADMIN && (
+                      <Link href="/dashboard" className="flex items-center space-x-4 text-gray-700 hover:text-blue-600 font-semibold transition-all duration-300 p-3 rounded-xl hover:bg-purple-50">
+                        <div className="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center">
+                          <HomeIcon className="w-5 h-5" />
+                        </div>
+                        <span>Dashboard</span>
+                      </Link>
+                    )}
+                    {user?.role === UserRole.SUPER_ADMIN && (
+                      <Link href="/admin" className="flex items-center space-x-4 text-gray-700 hover:text-purple-600 font-semibold transition-all duration-300 p-3 rounded-xl hover:bg-purple-50">
+                        <div className="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center">
+                          <Shield className="w-5 h-5" />
+                        </div>
+                        <span>Admin</span>
+                      </Link>
+                    )}
+                  </>
                 )}
 
                 {/* Mobile Pages */}

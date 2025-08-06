@@ -1,4 +1,5 @@
 import { Client, Databases, Storage, ID, Query } from 'appwrite';
+import { HostelData, HostelResponse, HostelListItem } from '@/types/hostel';
 
 const client = new Client()
   .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
@@ -33,75 +34,6 @@ export interface RoomType {
   price: number | null;
 }
 
-export interface HostelData {
-  hostelId?: string;
-  ownerId: string;
-  ownerEmail: string;
-  hostelName: string;
-  description: string;
-  location: string;
-  city: string;
-  area: string;
-  nearbyLandmark?: string;
-  googleMapsLocation?: string;
-  mainPhoto: string;
-  galleryImages?: string[];
-  ownerName: string;
-  ownerPhone: string;
-  roomTypes: RoomType[];
-  facilities: string[];
-  genderSpecific: 'boys' | 'girls' | 'co-ed';
-  status?: 'active' | 'inactive' | 'pending';
-  createdAt?: string;
-  updatedAt?: string;
-}
-
-export interface HostelResponse {
-  $id: string;
-  $createdAt: string;
-  $updatedAt: string;
-  hostelId: string;
-  ownerId: string;
-  ownerEmail: string;
-  hostelName: string;
-  description: string;
-  location: string;
-  city: string;
-  area: string;
-  nearbyLandmark: string;
-  googleMapsLocation: string;
-  mainPhoto: string;
-  galleryImages: string;
-  ownerName: string;
-  ownerPhone: string;
-  roomTypes: string;
-  facilities: string;
-  genderSpecific: string;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface HostelListItem {
-  hostelId: string;
-  hostelName: string;
-  description: string;
-  city: string;
-  area: string;
-  nearbyLandmark: string;
-  mainPhoto: string;
-  galleryImages: string;
-  ownerName: string;
-  ownerPhone: string;
-  ownerEmail: string;
-  roomTypes: string;
-  facilities: string;
-  genderSpecific: string;
-  ownerId: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
 export class HostelService {
   // Create a new hostel listing
   static async createHostel(hostelData: HostelData): Promise<HostelResponse> {
@@ -131,7 +63,11 @@ export class HostelService {
         roomTypes: JSON.stringify(hostelData.roomTypes),
         facilities: JSON.stringify(hostelData.facilities),
         genderSpecific: hostelData.genderSpecific,
-        status: 'active',
+        status: 'pending', // Always start as pending
+        submittedAt: new Date().toISOString(),
+        approvedAt: '',
+        approvedBy: '',
+        rejectionReason: '',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -152,14 +88,15 @@ export class HostelService {
     }
   }
 
-  // Get all hostels
+  // Get all hostels (public view - only approved)
   static async getAllHostels(): Promise<HostelListItem[]> {
     try {
       // Try public access first (for non-authenticated users)
       try {
         const response = await publicDatabases.listDocuments(
           DATABASE_ID,
-          COLLECTION_HOSTELS
+          COLLECTION_HOSTELS,
+          [Query.equal('status', 'approved')] // Only show approved hostels
         );
 
         return response.documents.map((doc: Record<string, unknown>) => ({
@@ -178,6 +115,11 @@ export class HostelService {
           facilities: doc.facilities as string,
           genderSpecific: doc.genderSpecific as string,
           ownerId: doc.ownerId as string,
+          status: doc.status as string,
+          submittedAt: doc.submittedAt as string,
+          approvedAt: doc.approvedAt as string,
+          approvedBy: doc.approvedBy as string,
+          rejectionReason: doc.rejectionReason as string,
           createdAt: doc.$createdAt as string,
           updatedAt: doc.$updatedAt as string
         }));
@@ -187,7 +129,8 @@ export class HostelService {
         // Fallback to authenticated access
         const response = await databases.listDocuments(
           DATABASE_ID,
-          COLLECTION_HOSTELS
+          COLLECTION_HOSTELS,
+          [Query.equal('status', 'approved')] // Only show approved hostels
         );
 
         return response.documents.map((doc: Record<string, unknown>) => ({
@@ -206,12 +149,154 @@ export class HostelService {
           facilities: doc.facilities as string,
           genderSpecific: doc.genderSpecific as string,
           ownerId: doc.ownerId as string,
+          status: doc.status as string,
+          submittedAt: doc.submittedAt as string,
+          approvedAt: doc.approvedAt as string,
+          approvedBy: doc.approvedBy as string,
+          rejectionReason: doc.rejectionReason as string,
           createdAt: doc.$createdAt as string,
           updatedAt: doc.$updatedAt as string
         }));
       }
     } catch (error) {
       console.error('Error fetching hostels:', error);
+      throw error;
+    }
+  }
+
+  // Get pending hostels (admin only)
+  static async getPendingHostels(): Promise<HostelResponse[]> {
+    try {
+      const response = await databases.listDocuments(
+        DATABASE_ID,
+        COLLECTION_HOSTELS,
+        [Query.equal('status', 'pending')]
+      );
+      return response.documents as unknown as HostelResponse[];
+    } catch (error) {
+      console.error('Error fetching pending hostels:', error);
+      throw error;
+    }
+  }
+
+  // Get all hostels for admin (including all statuses)
+  static async getAllHostelsForAdmin(): Promise<HostelResponse[]> {
+    try {
+      const response = await databases.listDocuments(
+        DATABASE_ID,
+        COLLECTION_HOSTELS
+      );
+      return response.documents as unknown as HostelResponse[];
+    } catch (error) {
+      console.error('Error fetching all hostels for admin:', error);
+      throw error;
+    }
+  }
+
+  // Approve hostel (admin only)
+  static async approveHostel(hostelId: string, adminUserId: string): Promise<void> {
+    try {
+      // First find the document by hostelId
+      const findResponse = await databases.listDocuments(
+        DATABASE_ID,
+        COLLECTION_HOSTELS,
+        [Query.equal('hostelId', hostelId)]
+      );
+      
+      if (findResponse.documents.length === 0) {
+        throw new Error('Hostel not found');
+      }
+      
+      const documentId = findResponse.documents[0].$id;
+      const currentHostel = findResponse.documents[0];
+      
+      // Prepare update data with fallbacks for missing fields
+      const updateData: Record<string, string | number | boolean> = {
+        status: 'approved',
+        approvedAt: new Date().toISOString(),
+        approvedBy: adminUserId,
+        rejectionReason: '',
+        updatedAt: new Date().toISOString()
+      };
+
+      // Add submittedAt if it doesn't exist (for existing hostels)
+      if (!currentHostel.submittedAt) {
+        updateData.submittedAt = currentHostel.createdAt || new Date().toISOString();
+      }
+
+      // Add other missing fields with defaults
+      if (!currentHostel.approvedAt) {
+        updateData.approvedAt = '';
+      }
+      if (!currentHostel.approvedBy) {
+        updateData.approvedBy = '';
+      }
+      if (!currentHostel.rejectionReason) {
+        updateData.rejectionReason = '';
+      }
+      
+      await databases.updateDocument(
+        DATABASE_ID,
+        COLLECTION_HOSTELS,
+        documentId,
+        updateData
+      );
+    } catch (error) {
+      console.error('Error approving hostel:', error);
+      throw error;
+    }
+  }
+
+  // Reject hostel (admin only)
+  static async rejectHostel(hostelId: string, adminUserId: string, reason?: string): Promise<void> {
+    try {
+      // First find the document by hostelId
+      const findResponse = await databases.listDocuments(
+        DATABASE_ID,
+        COLLECTION_HOSTELS,
+        [Query.equal('hostelId', hostelId)]
+      );
+      
+      if (findResponse.documents.length === 0) {
+        throw new Error('Hostel not found');
+      }
+      
+      const documentId = findResponse.documents[0].$id;
+      const currentHostel = findResponse.documents[0];
+      
+      // Prepare update data with fallbacks for missing fields
+      const updateData: Record<string, string | number | boolean> = {
+        status: 'rejected',
+        approvedAt: '',
+        approvedBy: '',
+        rejectionReason: reason || '',
+        updatedAt: new Date().toISOString()
+      };
+
+      // Add submittedAt if it doesn't exist (for existing hostels)
+      if (!currentHostel.submittedAt) {
+        updateData.submittedAt = currentHostel.createdAt || new Date().toISOString();
+      }
+
+      // Add other missing fields with defaults
+      if (!currentHostel.approvedAt) {
+        updateData.approvedAt = '';
+      }
+      if (!currentHostel.approvedBy) {
+        updateData.approvedBy = '';
+      }
+      if (!currentHostel.rejectionReason) {
+        updateData.rejectionReason = '';
+      }
+      
+      await databases.updateDocument(
+        DATABASE_ID,
+        COLLECTION_HOSTELS,
+        documentId,
+        updateData
+      );
+    } catch (error) {
+      console.error('Error rejecting hostel:', error);
       throw error;
     }
   }
@@ -369,7 +454,7 @@ export class HostelService {
     }
   }
 
-  // Search hostels
+  // Search hostels (only approved hostels)
   static async searchHostels(query: string, location?: string): Promise<HostelListItem[]> {
     try {
       // Try public access first (for non-authenticated users)
@@ -377,13 +462,15 @@ export class HostelService {
       try {
         response = await publicDatabases.listDocuments(
           DATABASE_ID,
-          COLLECTION_HOSTELS
+          COLLECTION_HOSTELS,
+          [Query.equal('status', 'approved')] // Only search approved hostels
         );
       } catch {
         console.log('Public access failed for search, trying authenticated access...');
         response = await databases.listDocuments(
           DATABASE_ID,
-          COLLECTION_HOSTELS
+          COLLECTION_HOSTELS,
+          [Query.equal('status', 'approved')] // Only search approved hostels
         );
       }
       
@@ -421,6 +508,11 @@ export class HostelService {
         facilities: doc.facilities as string,
         genderSpecific: doc.genderSpecific as string,
         ownerId: doc.ownerId as string,
+        status: doc.status as string,
+        submittedAt: doc.submittedAt as string,
+        approvedAt: doc.approvedAt as string,
+        approvedBy: doc.approvedBy as string,
+        rejectionReason: doc.rejectionReason as string,
         createdAt: doc.$createdAt as string,
         updatedAt: doc.$updatedAt as string
       }));

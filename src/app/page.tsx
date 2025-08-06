@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Search, Shield, CheckCircle, HeadphonesIcon, MapPin as MapPinIcon } from 'lucide-react';
+import { Search, Shield, CheckCircle, HeadphonesIcon, MapPin as MapPinIcon, RefreshCw } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import HostelCard from '@/components/hostel/HostelCard';
 import { useHostels } from '@/hooks/useHostels';
 
 export default function HomePage() {
-  const { hostels, loading, searchHostels, clearSearch } = useHostels();
+  const { hostels, loading, searchHostels, clearSearch, refetch } = useHostels();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchLocation, setSearchLocation] = useState('');
   const [isFiltered, setIsFiltered] = useState(false);
@@ -35,10 +35,9 @@ export default function HomePage() {
     clearSearch();
   };
 
-  // Manual refresh function for cache invalidation (available for future use)
-  // const handleRefresh = async () => {
-  //   await refetch();
-  // };
+  const handleRefresh = async () => {
+    await refetch();
+  };
 
 
 
@@ -133,21 +132,34 @@ export default function HomePage() {
       {/* Featured Hostels Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-green-100 text-green-800 mb-6">
-              <span className="w-2 h-2 bg-green-600 rounded-full mr-2"></span>
-              {isFiltered ? 'Search Results' : 'Featured Hostels'}
+                      <div className="text-center mb-16">
+              <div className="flex items-center justify-center space-x-4 mb-6">
+                <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                  <span className="w-2 h-2 bg-green-600 rounded-full mr-2"></span>
+                  {isFiltered ? 'Search Results' : 'Featured Hostels'}
+                </div>
+                {!isFiltered && (
+                  <button
+                    onClick={handleRefresh}
+                    disabled={loading}
+                    className="inline-flex items-center px-3 py-2 rounded-full text-sm font-medium bg-blue-100 text-blue-800 hover:bg-blue-200 transition-colors disabled:opacity-50"
+                    title="Refresh to check for new hostels"
+                  >
+                    <RefreshCw className={`w-4 h-4 mr-1 ${loading ? 'animate-spin' : ''}`} />
+                    Refresh
+                  </button>
+                )}
+              </div>
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                {isFiltered ? 'Search Results' : 'Featured Hostels'}
+              </h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                {isFiltered 
+                  ? `Found ${hostels.length} hostel${hostels.length !== 1 ? 's' : ''} matching your search criteria`
+                  : 'Discover our top-rated hostels with excellent amenities and prime locations across Pakistan'
+                }
+              </p>
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              {isFiltered ? 'Search Results' : 'Featured Hostels'}
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              {isFiltered 
-                ? `Found ${hostels.length} hostel${hostels.length !== 1 ? 's' : ''} matching your search criteria`
-                : 'Discover our top-rated hostels with excellent amenities and prime locations across Pakistan'
-              }
-            </p>
-          </div>
           
           {loading ? (
             <div className="text-center py-16">

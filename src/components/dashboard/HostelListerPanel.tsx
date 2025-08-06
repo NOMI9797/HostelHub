@@ -11,12 +11,16 @@ import {
   MapPin,
   Edit,
   Trash2,
-  Eye
+  Eye,
+  Clock,
+  CheckCircle,
+  XCircle
 } from 'lucide-react';
 
 import { useRouter } from 'next/navigation';
 import Header from '@/components/layout/Header';
-import { HostelService, HostelResponse } from '@/lib/hostel-service';
+import { HostelService } from '@/lib/hostel-service';
+import { HostelResponse } from '@/types/hostel';
 import CacheInvalidationService from '@/lib/cache-invalidation';
 
 interface HostelListerPanelProps {
@@ -309,14 +313,37 @@ export default function HostelListerPanel({ user }: HostelListerPanelProps) {
                           <span className="text-sm">{hostel.city}, {hostel.area}</span>
                         </div>
                         
-                        <div className="flex items-center justify-between">
-                          <div className="text-sm text-gray-600">
-                            <span className="font-medium">Status:</span> {hostel.status}
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center space-x-2">
+                            {hostel.status === 'pending' && (
+                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                <Clock className="w-3 h-3 mr-1" />
+                                Pending Approval
+                              </span>
+                            )}
+                            {hostel.status === 'approved' && (
+                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <CheckCircle className="w-3 h-3 mr-1" />
+                                Approved
+                              </span>
+                            )}
+                            {hostel.status === 'rejected' && (
+                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                <XCircle className="w-3 h-3 mr-1" />
+                                Rejected
+                              </span>
+                            )}
                           </div>
                           <div className="text-sm text-gray-500">
                             Posted {new Date(hostel.createdAt).toLocaleDateString()}
                           </div>
                         </div>
+                        
+                        {hostel.status === 'rejected' && hostel.rejectionReason && (
+                          <div className="text-xs text-red-600 bg-red-50 p-2 rounded-lg mb-3">
+                            <strong>Reason:</strong> {hostel.rejectionReason}
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}
