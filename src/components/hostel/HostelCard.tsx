@@ -19,6 +19,9 @@ interface HostelCardProps {
     roomTypes: string;
     facilities: string;
     genderSpecific: string;
+    ownerName: string;
+    ownerPhone: string;
+    ownerEmail: string;
   };
 }
 
@@ -39,30 +42,16 @@ const getFileUrl = (fileId: string) => {
 };
 
 export default function HostelCard({ hostel }: HostelCardProps) {
-  // Parse room types to get the lowest available price
+  // Parse room types to get available room types count
   let roomTypes: RoomType[] = [];
-  let lowestPrice = 0;
   let availableRoomTypes = 0;
   
   try {
     roomTypes = JSON.parse(hostel.roomTypes || '[]');
     
-    // Filter only available rooms and get the lowest price
+    // Filter only available rooms
     const availableRooms = roomTypes.filter((rt: RoomType) => rt.available && rt.price > 0);
     availableRoomTypes = availableRooms.length;
-    
-    if (availableRooms.length > 0) {
-      lowestPrice = Math.min(...availableRooms.map((rt: RoomType) => rt.price));
-      
-      // Check if all prices are default prices (indicating they haven't been customized)
-      const defaultPrices = [15000, 12000, 10000, 8000];
-      const allDefaultPrices = availableRooms.every(rt => defaultPrices.includes(rt.price));
-      
-      if (allDefaultPrices) {
-        // If all prices are default, don't show a specific price
-        lowestPrice = 0;
-      }
-    }
   } catch (error) {
     console.error('Error parsing room types for', hostel.hostelName, ':', error);
     roomTypes = [];
@@ -130,25 +119,22 @@ export default function HostelCard({ hostel }: HostelCardProps) {
             </span>
           </div>
 
-          {/* Price Row */}
+          {/* Contact Information Row */}
           <div className="mb-4">
-            {lowestPrice > 0 ? (
+            <div className="space-y-2">
               <div className="flex items-center space-x-2">
-                <span className="text-2xl font-bold text-gray-900">
-                  PKR {lowestPrice.toLocaleString()}
-                </span>
-                <span className="text-sm text-gray-500">/month</span>
-                <span className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">starting</span>
+                <span className="text-sm font-semibold text-gray-700">Contact:</span>
+                <span className="text-sm text-gray-600">{hostel.ownerName}</span>
               </div>
-            ) : availableRoomTypes > 0 ? (
-              <span className="text-lg text-gray-900 font-semibold">
-                Prices vary by room type
-              </span>
-            ) : (
-              <span className="text-lg text-gray-900 font-semibold">
-                Contact for pricing
-              </span>
-            )}
+              <div className="flex items-center space-x-2">
+                <span className="text-sm font-semibold text-gray-700">Phone:</span>
+                <span className="text-sm text-gray-900 font-medium">{hostel.ownerPhone}</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className="text-sm font-semibold text-gray-700">Email:</span>
+                <span className="text-sm text-gray-900 font-medium truncate">{hostel.ownerEmail}</span>
+              </div>
+            </div>
           </div>
 
           {/* Facilities and Room Types Row */}
