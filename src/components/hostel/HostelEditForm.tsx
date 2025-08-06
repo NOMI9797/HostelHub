@@ -3,6 +3,7 @@ import { Edit, Plus, X, Upload } from 'lucide-react';
 import { HostelService } from '@/lib/hostel-service';
 import { EditFormData } from '@/types/hostel';
 import { FACILITY_ICONS, GENDER_OPTIONS } from '@/constants/facilities';
+import { getRoomTypeDisplay } from '@/utils/hostel-utils';
 
 interface HostelEditFormProps {
   editForm: EditFormData;
@@ -56,7 +57,12 @@ export default function HostelEditForm({
     setEditForm({
       ...editForm,
       roomTypes: editForm.roomTypes.map((rt, i) => 
-        i === index ? { ...rt, [field]: value } : rt
+        i === index ? { 
+          ...rt, 
+          [field]: field === 'price' 
+            ? (value === '' || value === 0 ? null : Number(value))
+            : value 
+        } : rt
       )
     });
   };
@@ -64,7 +70,7 @@ export default function HostelEditForm({
   const handleAddRoomType = () => {
     setEditForm({
       ...editForm,
-      roomTypes: [...editForm.roomTypes, { type: '', available: true, price: 0 }]
+      roomTypes: [...editForm.roomTypes, { type: '', available: true, price: null }]
     });
   };
 
@@ -286,17 +292,17 @@ export default function HostelEditForm({
                       <label className="block text-sm font-semibold text-gray-700 mb-3">Room Type</label>
                       <input
                         type="text"
-                        value={roomType.type}
+                        value={roomType.type.replace(/Seater/g, 'Bed')}
                         onChange={(e) => handleRoomTypeChange(index, 'type', e.target.value)}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500 text-base"
-                        placeholder="e.g., Single Room, Double Room, etc."
+                        placeholder="e.g., 1-Bed, 2-Bed, etc."
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-3">Price (PKR)</label>
                       <input
                         type="number"
-                        value={roomType.price}
+                        value={roomType.price || ''}
                         onChange={(e) => handleRoomTypeChange(index, 'price', Number(e.target.value))}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500 text-base"
                         placeholder="0"

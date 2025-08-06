@@ -64,7 +64,10 @@ export default function HostelDetailPage() {
         ownerName: editForm.ownerName,
         ownerPhone: editForm.ownerPhone,
         genderSpecific: editForm.genderSpecific,
-        roomTypes: editForm.roomTypes,
+        roomTypes: editForm.roomTypes.map(rt => ({
+          ...rt,
+          type: rt.type.replace(/Seater/g, 'Bed') // Replace Seater with Bed
+        })),
         facilities: editForm.facilities,
         galleryImages: editForm.galleryImages,
       };
@@ -343,12 +346,6 @@ export default function HostelDetailPage() {
                       <span className="font-bold text-gray-900">
                         {hostel.genderSpecific === 'co-ed' ? 'Co-ed' : 
                          hostel.genderSpecific === 'boys' ? 'Boys' : 'Girls'}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
-                      <span className="text-gray-600 font-medium">Starting Price</span>
-                      <span className="font-bold text-blue-600 text-lg">
-                        PKR {Math.min(...roomTypes.map(rt => rt.price || 0)).toLocaleString()}
                       </span>
                     </div>
                   </div>

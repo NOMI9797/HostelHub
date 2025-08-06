@@ -4,7 +4,7 @@ import { HostelDataFromDB } from '@/types/hostel';
 
 interface HostelDetailsProps {
   hostel: HostelDataFromDB;
-  roomTypes: Array<{type: string; available: boolean; price: number}>;
+  roomTypes: Array<{type: string; available: boolean; price: number | null}>;
   facilities: string[];
 }
 
@@ -29,24 +29,20 @@ export default function HostelDetails({ hostel, roomTypes, facilities }: HostelD
               </div>
             </div>
           </div>
-          <div className="text-left lg:text-right">
-            <div className="text-xl md:text-2xl font-bold text-blue-600">{formatPrice(minPrice)}</div>
-            <div className="text-sm text-gray-600">Starting Price</div>
-          </div>
         </div>
         
         <p className="text-gray-700 leading-relaxed text-sm md:text-base">{hostel.description}</p>
       </div>
 
       {/* Room Types & Pricing */}
-      {roomTypes.length > 0 && (
+      {roomTypes.filter(rt => rt.available).length > 0 && (
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <h2 className="text-xl font-bold text-gray-900 mb-4">Room Types & Pricing</h2>
           <div className="space-y-4">
-            {roomTypes.map((roomType, index) => (
+            {roomTypes.filter(rt => rt.available).map((roomType, index) => (
               <div key={index} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-gray-50 rounded-lg space-y-2 sm:space-y-0">
                 <div className="flex-1">
-                  <h3 className="font-semibold text-gray-900 text-base md:text-lg">{roomType.type}</h3>
+                  <h3 className="font-semibold text-gray-900 text-base md:text-lg">{roomType.type.replace(/Seater/g, 'Bed')}</h3>
                   <div className="flex items-center space-x-4 text-sm text-gray-600 mt-1">
                     <span className={roomType.available ? 'text-green-600' : 'text-red-600'}>
                       {roomType.available ? 'Available' : 'Not Available'}

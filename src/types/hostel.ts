@@ -2,7 +2,7 @@
 export interface RoomType {
   type: string;
   available: boolean;
-  price: number;
+  price: number | null;
 }
 
 export interface HostelData {
@@ -108,7 +108,7 @@ export interface EditFormData {
   ownerName: string;
   ownerPhone: string;
   genderSpecific: 'boys' | 'girls' | 'co-ed';
-  roomTypes: Array<{type: string; available: boolean; price: number}>;
+  roomTypes: Array<{type: string; available: boolean; price: number | null}>;
   facilities: string[];
   galleryImages: string[];
 } 

@@ -10,9 +10,9 @@ export const parseHostelData = (hostel: HostelDataFromDB) => {
     galleryImages = [];
   }
   
-  let roomTypes: Array<{type: string; available: boolean; price: number}> = [];
+  let roomTypes: Array<{type: string; available: boolean; price: number | null}> = [];
   try {
-    roomTypes = (hostel.roomTypes ? JSON.parse(hostel.roomTypes) : []) as Array<{type: string; available: boolean; price: number}>;
+    roomTypes = (hostel.roomTypes ? JSON.parse(hostel.roomTypes) : []) as Array<{type: string; available: boolean; price: number | null}>;
   } catch (error) {
     console.error('Error parsing roomTypes:', error);
     roomTypes = [];
@@ -53,13 +53,15 @@ export const initializeEditForm = (hostel: HostelDataFromDB): EditFormData => {
 };
 
 // Get minimum price from room types
-export const getMinimumPrice = (roomTypes: Array<{price: number}>) => {
+export const getMinimumPrice = (roomTypes: Array<{price: number | null}>) => {
   if (!roomTypes || roomTypes.length === 0) return 0;
-  return Math.min(...roomTypes.map(rt => rt.price || 0));
+  const validPrices = roomTypes.map(rt => rt.price).filter((price): price is number => price !== null && price > 0);
+  return validPrices.length > 0 ? Math.min(...validPrices) : 0;
 };
 
 // Format price with locale
-export const formatPrice = (price: number) => {
+export const formatPrice = (price: number | null) => {
+  if (price === null || price === 0) return 'Contact for pricing';
   return `PKR ${price.toLocaleString()}`;
 };
 
@@ -71,6 +73,11 @@ export const getGenderDisplay = (gender: string) => {
     case 'girls': return 'Girls';
     default: return gender;
   }
+};
+
+// Convert room type display (replace Seater with Bed)
+export const getRoomTypeDisplay = (roomType: string) => {
+  return roomType.replace(/Seater/g, 'Bed');
 };
 
 // Validate hostel data

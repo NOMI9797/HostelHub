@@ -30,7 +30,7 @@ console.log('Hostel Service Config:', {
 export interface RoomType {
   type: string;
   available: boolean;
-  price: number;
+  price: number | null;
 }
 
 export interface HostelData {

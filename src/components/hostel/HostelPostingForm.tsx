@@ -31,10 +31,10 @@ const FACILITIES = [
 ];
 
 const ROOM_TYPES = [
-  { type: '1-Seater', defaultPrice: 15000 },
-  { type: '2-Seater', defaultPrice: 12000 },
-  { type: '3-Seater', defaultPrice: 10000 },
-  { type: '4-Seater', defaultPrice: 8000 },
+  { type: '1-Bed', defaultPrice: null },
+  { type: '2-Bed', defaultPrice: null },
+  { type: '3-Bed', defaultPrice: null },
+  { type: '4-Bed', defaultPrice: null },
 ];
 
 // Helper function to get file URL
@@ -197,7 +197,9 @@ export default function HostelPostingForm() {
     const updatedRoomTypes = [...formData.roomTypes];
     updatedRoomTypes[index] = {
       ...updatedRoomTypes[index],
-      [field]: field === 'available' ? Boolean(value) : Number(value)
+      [field]: field === 'available' 
+        ? Boolean(value) 
+        : value === '' || value === '0' ? null : Number(value)
     };
     setFormData(prev => ({
       ...prev,
@@ -330,7 +332,10 @@ export default function HostelPostingForm() {
         galleryImages: formData.galleryImages,
         ownerName: formData.ownerName,
         ownerPhone: formData.ownerPhone,
-        roomTypes: formData.roomTypes,
+        roomTypes: formData.roomTypes.map(rt => ({
+          ...rt,
+          type: rt.type.replace(/Seater/g, 'Bed') // Replace Seater with Bed
+        })),
         facilities: formData.facilities,
         genderSpecific: formData.genderSpecific,
       };
@@ -694,7 +699,7 @@ export default function HostelPostingForm() {
                   <div className="flex items-center space-x-2 sm:ml-auto">
                     <input
                       type="number"
-                      value={roomType.price}
+                      value={roomType.price || ''}
                       onChange={(e) => handleRoomTypeChange(index, 'price', e.target.value)}
                       className="w-20 sm:w-24 p-2 bg-white border border-gray-200 rounded text-gray-900"
                       placeholder="Price"
