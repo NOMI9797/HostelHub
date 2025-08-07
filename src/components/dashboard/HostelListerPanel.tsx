@@ -14,13 +14,14 @@ import {
   Eye,
   Clock,
   CheckCircle,
-  XCircle
+  XCircle,
+  AlertTriangle
 } from 'lucide-react';
 
 import { useRouter } from 'next/navigation';
 import Header from '@/components/layout/Header';
 import { HostelService } from '@/lib/hostel-service';
-import { HostelResponse } from '@/types/hostel';
+import { HostelResponse, HostelStatus } from '@/types/hostel';
 import CacheInvalidationService from '@/lib/cache-invalidation';
 
 interface HostelListerPanelProps {
@@ -37,6 +38,9 @@ export default function HostelListerPanel({ user }: HostelListerPanelProps) {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [postedHostels, setPostedHostels] = useState<HostelResponse[]>([]);
   const [loading, setLoading] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [selectedHostelId, setSelectedHostelId] = useState<string | null>(null);
+  const [selectedHostelName, setSelectedHostelName] = useState<string>('');
   const router = useRouter();
 
   const menuItems = [
@@ -105,6 +109,48 @@ export default function HostelListerPanel({ user }: HostelListerPanelProps) {
     } catch (error) {
       console.error('Error deleting hostel:', error);
       alert('Failed to delete hostel. Please try again.');
+    }
+  };
+
+  const openConfirmModal = (hostelId: string, hostelName: string) => {
+    setSelectedHostelId(hostelId);
+    setSelectedHostelName(hostelName);
+    setShowConfirmModal(true);
+  };
+
+  const closeConfirmModal = () => {
+    setShowConfirmModal(false);
+    setSelectedHostelId(null);
+    setSelectedHostelName('');
+  };
+
+  const confirmApplyAgain = async () => {
+    if (!selectedHostelId) return;
+
+    try {
+      // Update the hostel status back to pending
+      await HostelService.updateHostel(selectedHostelId, {
+        status: HostelStatus.PENDING,
+        submittedAt: new Date().toISOString(),
+        rejectionReason: ''
+      });
+      
+      // Invalidate cache for this hostel and all hostels
+      CacheInvalidationService.invalidateOnHostelUpdate(selectedHostelId);
+      
+      // Refresh the data
+      fetchPostedHostels();
+      
+
+      
+      // Close modal
+      closeConfirmModal();
+      
+      // Show success message (you could replace this with a toast notification)
+      alert('Hostel has been resubmitted for approval!');
+    } catch (error) {
+      console.error('Error applying again:', error);
+      alert('Failed to resubmit hostel. Please try again.');
     }
   };
 
@@ -344,6 +390,18 @@ export default function HostelListerPanel({ user }: HostelListerPanelProps) {
                             <strong>Reason:</strong> {hostel.rejectionReason}
                           </div>
                         )}
+                        
+                        {hostel.status === 'rejected' && (
+                          <div className="mt-3 pt-3 border-t border-gray-100">
+                            <button
+                              onClick={() => openConfirmModal(hostel.hostelId, hostel.hostelName)}
+                              className="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 bg-gray-100 text-gray-700 text-xs font-medium rounded-lg hover:bg-gray-200 transition-all duration-200 flex items-center justify-center space-x-1.5 border border-gray-200 hover:border-gray-300"
+                            >
+                              <Plus className="w-3 h-3" />
+                              <span>Apply Again</span>
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -486,6 +544,67 @@ export default function HostelListerPanel({ user }: HostelListerPanelProps) {
           </main>
         </div>
       </div>
+
+      {/* Custom Confirmation Modal */}
+      {showConfirmModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white rounded-xl sm:rounded-2xl shadow-2xl max-w-sm sm:max-w-md w-full mx-2 sm:mx-4 transform transition-all duration-300 scale-100">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-100">
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 rounded-lg sm:rounded-xl flex items-center justify-center">
+                  <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900">Confirm Resubmission</h3>
+                  <p className="text-xs sm:text-sm text-gray-500">Review your action</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-4 sm:p-6">
+              <div className="mb-4">
+                <p className="text-sm sm:text-base text-gray-700 mb-3">
+                  Are you sure you want to resubmit <strong className="text-gray-900">{selectedHostelName}</strong> for approval?
+                </p>
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4">
+                  <div className="flex items-start space-x-2 sm:space-x-3">
+                    <div className="w-5 h-5 sm:w-6 sm:h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Plus className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-blue-600" />
+                    </div>
+                    <div>
+                      <p className="text-xs sm:text-sm font-medium text-blue-900 mb-1">What will happen:</p>
+                      <ul className="text-xs sm:text-sm text-blue-800 space-y-0.5 sm:space-y-1">
+                        <li>• Status will change to &quot;Pending Approval&quot;</li>
+                        <li>• Admin will review your submission again</li>
+                        <li>• Previous rejection reason will be cleared</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2 sm:gap-0 sm:space-x-3 p-4 sm:p-6 border-t border-gray-100 bg-gray-50 rounded-b-xl sm:rounded-b-2xl">
+              <button
+                onClick={closeConfirmModal}
+                className="w-full sm:w-auto px-3 sm:px-4 py-2 sm:py-2.5 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 font-medium text-xs sm:text-sm order-2 sm:order-1"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmApplyAgain}
+                className="w-full sm:w-auto px-3 sm:px-4 py-2 sm:py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 font-medium text-xs sm:text-sm flex items-center justify-center space-x-1.5 sm:space-x-2 order-1 sm:order-2"
+              >
+                <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span>Resubmit</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 } 
