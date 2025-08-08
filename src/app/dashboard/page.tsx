@@ -43,27 +43,48 @@ export default function Dashboard() {
           {/* Main Content */}
           <div className="relative py-20 px-4 sm:px-6 lg:px-8 z-10">
             <div className="max-w-5xl mx-auto">
-              {/* Coming Soon Section */}
+              {/* Dashboard Welcome Section */}
               <div className="text-center mb-20">
                 <div className="relative mb-12">
-                  <div className="w-32 h-32 bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-600 rounded-full flex items-center justify-center mx-auto shadow-2xl animate-pulse">
+                  <div className="w-32 h-32 bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-600 rounded-full flex items-center justify-center mx-auto shadow-2xl">
                     <Users className="w-16 h-16 text-white" />
                   </div>
-                  <div className="absolute -inset-4 bg-gradient-to-r from-blue-400/30 to-purple-400/30 rounded-full blur-xl animate-pulse delay-700"></div>
+                  <div className="absolute -inset-4 bg-gradient-to-r from-blue-400/30 to-purple-400/30 rounded-full blur-xl"></div>
                 </div>
                 <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent mb-8 animate-fade-in">
                   Your Room Seeker Dashboard
                 </h1>
-                <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white px-10 py-5 rounded-full inline-block mb-10 shadow-xl transform hover:scale-105 transition-all duration-300">
-                  <span className="text-xl font-bold flex items-center space-x-2">
-                    <span className="animate-bounce">🚀</span>
-                    <span>Coming Soon</span>
-                    <span className="animate-bounce delay-100">✨</span>
-                  </span>
+                <div className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-gray-100 mb-10">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl">
+                      <h3 className="text-xl font-semibold text-gray-900 mb-2">Find Hostels</h3>
+                      <p className="text-gray-600">Explore verified hostels near your institution</p>
+                    </div>
+                    <div className="p-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl">
+                      <h3 className="text-xl font-semibold text-gray-900 mb-2">Save Favorites</h3>
+                      <p className="text-gray-600">Bookmark hostels you&apos;re interested in</p>
+                    </div>
+                    <div className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl">
+                      <h3 className="text-xl font-semibold text-gray-900 mb-2">Contact Owners</h3>
+                      <p className="text-gray-600">Connect directly with hostel owners</p>
+                    </div>
+                  </div>
                 </div>
                 <p className="text-2xl text-gray-700 max-w-3xl mx-auto leading-relaxed font-medium">
-                  We&apos;re crafting something extraordinary for you! Your personalized hostel discovery experience is just around the corner.
+                  Welcome to your personalized dashboard! Start exploring hostels and find your perfect accommodation.
                 </p>
+              </div>
+
+              {/* Quick Actions Section */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                <div className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-lg border border-gray-100">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-4">Recent Searches</h2>
+                  <p className="text-gray-600">Your recent hostel searches will appear here</p>
+                </div>
+                <div className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-lg border border-gray-100">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-4">Saved Hostels</h2>
+                  <p className="text-gray-600">Your bookmarked hostels will be listed here</p>
+                </div>
               </div>
 
               {/* Inspirational Quotes Section */}

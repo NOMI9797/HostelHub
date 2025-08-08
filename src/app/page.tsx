@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { Search, Shield, CheckCircle, HeadphonesIcon, MapPin as MapPinIcon, RefreshCw, Sparkles, TrendingUp, Users2, Star } from 'lucide-react';
+import { Search, Shield, CheckCircle, HeadphonesIcon, MapPin as MapPinIcon, RefreshCw, Sparkles, Users2 } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import HostelCard from '@/components/hostel/HostelCard';
 import { useHostels } from '@/hooks/useHostels';
@@ -83,9 +83,9 @@ export default function HomePage() {
           <div className="text-center">
             {/* Animated badge */}
             <div className={`inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 border border-blue-200/50 mb-8 transform transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-              <TrendingUp className="w-4 h-4 text-blue-600 mr-2" />
-              <span className="text-sm font-medium text-blue-700">Pakistan&apos;s #1 Hostel Platform</span>
-              <Star className="w-4 h-4 text-yellow-500 ml-2" />
+              <Shield className="w-4 h-4 text-blue-600 mr-2" />
+              <span className="text-sm font-medium text-blue-700">Trusted Student Accommodation</span>
+              <CheckCircle className="w-4 h-4 text-green-500 ml-2" />
             </div>
             
             <h1 className={`text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight transform transition-all duration-1000 delay-200 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
@@ -273,13 +273,13 @@ export default function HomePage() {
       </section>
 
       {/* Trust & Quality Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white/50 backdrop-blur-sm">
+      <section className="py-12 sm:py-20 px-4 sm:px-6 lg:px-8 bg-white/50 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-6">
+          <div className="text-center mb-10 sm:mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 sm:mb-6">
               Trusted by Students & Travelers
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed px-4">
               Join thousands who choose HostelHub for safe, affordable, and verified accommodations across Pakistan
             </p>
           </div>
@@ -297,22 +297,22 @@ export default function HomePage() {
             </div>
             
             <div className="text-center p-8 bg-white/60 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
-              <div className="w-16 h-16 bg-green-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <CheckCircle className="w-8 h-8 text-green-600" />
+              <div className="w-16 h-16 bg-purple-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <Users2 className="w-8 h-8 text-purple-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Instant Booking</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">Student-Focused</h3>
               <p className="text-gray-600 leading-relaxed">
-                Book your preferred hostel instantly with secure payment options. Get immediate confirmation and detailed booking information.
+                Tailored specifically for students, our platform helps you find accommodation that suits your academic needs and budget.
               </p>
             </div>
             
             <div className="text-center p-8 bg-white/60 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
-              <div className="w-16 h-16 bg-purple-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <HeadphonesIcon className="w-8 h-8 text-purple-600" />
+              <div className="w-16 h-16 bg-green-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <HeadphonesIcon className="w-8 h-8 text-green-600" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-4">24/7 Support</h3>
               <p className="text-gray-600 leading-relaxed">
-                Our dedicated support team is available round-the-clock to assist with bookings, inquiries, and any concerns you may have.
+                Our dedicated support team is available round-the-clock to assist with inquiries and any concerns you may have.
               </p>
             </div>
           </div>
