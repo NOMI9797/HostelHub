@@ -5,6 +5,8 @@ import { AuthProvider } from "@/lib/auth-context";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import CachePerformance from "@/components/CachePerformance";
 import Footer from "@/components/layout/Footer";
+import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
+import GoogleTagManager from "@/components/analytics/GoogleTagManager";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -67,6 +69,8 @@ export default function RootLayout({
             <CachePerformance />
           </AuthProvider>
         </ErrorBoundary>
+        <GoogleAnalytics />
+        <GoogleTagManager />
       </body>
     </html>
   );
