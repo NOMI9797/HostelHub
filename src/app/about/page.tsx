@@ -205,22 +205,18 @@ export default function AboutPage() {
               <p className="text-blue-100">Our impact in the student accommodation space</p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="text-center">
-                <div className="text-3xl font-bold mb-2">500+</div>
+                <div className="text-3xl font-bold mb-2">50+</div>
                 <div className="text-blue-100 text-sm">Hostels Listed</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold mb-2">10,000+</div>
+                <div className="text-3xl font-bold mb-2">1,000+</div>
                 <div className="text-blue-100 text-sm">Students Helped</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold mb-2">50+</div>
+                <div className="text-3xl font-bold mb-2">10+</div>
                 <div className="text-blue-100 text-sm">Cities Covered</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold mb-2">4.8★</div>
-                <div className="text-blue-100 text-sm">Average Rating</div>
               </div>
             </div>
           </div>

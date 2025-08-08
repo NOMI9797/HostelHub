@@ -12,8 +12,44 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "HostelHub - Find Your Perfect Hostel",
-  description: "Discover and book the best hostels worldwide. Connect with travelers and find affordable accommodation.",
+  title: "HostelHub - Student Hostel Accommodation Platform in Pakistan",
+  description: "Pakistan's leading platform for student hostel accommodations. Find verified, affordable, and quality hostels near your educational institution. Safe and trusted student housing solutions.",
+  keywords: "student hostels, hostel accommodation, Pakistan hostels, student housing, university accommodation, college hostels, safe student hostels",
+  authors: [{ name: "HostelHub Team" }],
+  creator: "HostelHub",
+  publisher: "HostelHub",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  openGraph: {
+    title: "HostelHub - Student Hostel Accommodation Platform",
+    description: "Find verified student hostels across Pakistan. Safe, affordable, and trusted accommodation for students.",
+    url: "https://www.hostelhub.pro",
+    siteName: "HostelHub",
+    locale: "en_US",
+    type: "website"
+  },
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  verification: {
+    google: "add-your-google-site-verification-here",
+  },
 };
 
 export default function RootLayout({

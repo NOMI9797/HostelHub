@@ -47,8 +47,8 @@ export default function PrivacyPolicyPage() {
                   </h2>
                   <p className="text-gray-700 leading-relaxed">
                     At HostelHub, we are committed to protecting your privacy and ensuring the security of your personal information. 
-                    This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our hostel 
-                    booking platform.
+                    This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our student 
+                    accommodation platform designed specifically for students seeking hostel accommodations.
                   </p>
                 </section>
 
@@ -63,8 +63,9 @@ export default function PrivacyPolicyPage() {
                       <h3 className="text-lg font-semibold text-gray-900 mb-2">Personal Information</h3>
                       <ul className="list-disc list-inside text-gray-700 space-y-1 ml-4">
                         <li>Name and contact information (email, phone number)</li>
-                        <li>Account credentials and profile information</li>
-                        <li>Payment and billing information</li>
+                        <li>Student account credentials and profile information</li>
+                        <li>Educational institution details (when provided)</li>
+                        <li>Payment and billing information for hostel accommodations</li>
                         <li>Communication preferences</li>
                       </ul>
                     </div>
@@ -74,7 +75,7 @@ export default function PrivacyPolicyPage() {
                         <li>IP address and device information</li>
                         <li>Browser type and version</li>
                         <li>Pages visited and time spent on our platform</li>
-                        <li>Search queries and booking history</li>
+                        <li>Search queries for student accommodations and hostel preferences</li>
                       </ul>
                     </div>
                   </div>
@@ -88,11 +89,11 @@ export default function PrivacyPolicyPage() {
                   </h2>
                   <div className="space-y-4">
                     <ul className="list-disc list-inside text-gray-700 space-y-2 ml-4">
-                      <li>To provide and maintain our hostel booking services</li>
-                      <li>To process bookings and payments</li>
-                      <li>To communicate with you about your account and bookings</li>
-                      <li>To improve our platform and user experience</li>
-                      <li>To send promotional offers and updates (with your consent)</li>
+                      <li>To provide and maintain our student accommodation services</li>
+                      <li>To connect students with suitable hostel accommodations</li>
+                      <li>To communicate with you about your account and accommodation inquiries</li>
+                      <li>To improve our platform and enhance the student experience</li>
+                      <li>To send relevant accommodation offers and updates (with your consent)</li>
                       <li>To comply with legal obligations and prevent fraud</li>
                     </ul>
                   </div>
@@ -108,8 +109,8 @@ export default function PrivacyPolicyPage() {
                     We do not sell, trade, or rent your personal information to third parties. We may share your information in the following circumstances:
                   </p>
                   <ul className="list-disc list-inside text-gray-700 space-y-2 ml-4">
-                    <li>With hostel owners to facilitate bookings</li>
-                    <li>With payment processors to complete transactions</li>
+                    <li>With verified hostel owners to facilitate student accommodation arrangements</li>
+                    <li>With payment processors to complete accommodation transactions</li>
                     <li>With service providers who assist in our operations</li>
                     <li>When required by law or to protect our rights</li>
                     <li>With your explicit consent</li>

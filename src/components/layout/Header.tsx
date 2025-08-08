@@ -17,36 +17,36 @@ export default function Header() {
 
   return (
     <>
-            <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+            <header className="bg-white/70 backdrop-blur-sm border-b border-gray-200/50 sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
                 <HomeIcon className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">HostelHub</h1>
-                <p className="text-xs text-gray-500">Trusted Hostel Booking</p>
+                <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">HostelHub</h1>
+                <p className="text-xs text-gray-500">Trusted Hostels</p>
               </div>
             </div>
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-8">
-              <Link href="/" className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-blue-600 font-medium transition-colors">
+              <Link href="/" className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-blue-600 font-medium transition-all duration-300 hover:scale-105">
                 <HomeIcon className="w-4 h-4" />
                 <span>Home</span>
               </Link>
               {!loading && isAuthenticated && (
                 <>
                   {user?.role !== UserRole.SUPER_ADMIN && (
-                    <Link href="/dashboard" className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-blue-600 font-medium transition-colors">
+                    <Link href="/dashboard" className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-blue-600 font-medium transition-all duration-300 hover:scale-105">
                       <HomeIcon className="w-4 h-4" />
                       <span>Dashboard</span>
                     </Link>
                   )}
                   {user?.role === UserRole.SUPER_ADMIN && (
-                    <Link href="/admin" className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-purple-600 font-medium transition-colors">
+                    <Link href="/admin" className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-purple-600 font-medium transition-all duration-300 hover:scale-105">
                       <Shield className="w-4 h-4" />
                       <span>Admin</span>
                     </Link>
@@ -54,12 +54,12 @@ export default function Header() {
                 </>
               )}
               
-              <Link href="/about" className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-blue-600 font-medium transition-colors">
+              <Link href="/about" className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-blue-600 font-medium transition-all duration-300 hover:scale-105">
                 <Users className="w-4 h-4" />
                 <span>About Us</span>
               </Link>
               
-              <Link href="/contact" className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-blue-600 font-medium transition-colors">
+              <Link href="/contact" className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-blue-600 font-medium transition-all duration-300 hover:scale-105">
                 <MessageSquare className="w-4 h-4" />
                 <span>Contact</span>
               </Link>
@@ -75,8 +75,8 @@ export default function Header() {
               ) : isAuthenticated ? (
                 <div className="flex items-center space-x-3">
                   {/* User Info */}
-                  <div className="flex items-center space-x-3 px-3 py-2 bg-gray-50 rounded-lg">
-                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                  <div className="flex items-center space-x-3 px-3 py-2 bg-white/80 backdrop-blur-sm rounded-xl border border-gray-100">
+                    <div className="w-8 h-8 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-lg flex items-center justify-center">
                       <span className="text-blue-600 font-semibold text-sm">
                         {user?.email?.charAt(0).toUpperCase() || 'U'}
                       </span>
@@ -85,17 +85,17 @@ export default function Header() {
                   </div>
                   <button 
                     onClick={handleSignOut}
-                    className="px-4 py-2 text-gray-600 hover:text-red-600 font-medium transition-colors"
+                    className="px-4 py-2 text-gray-600 hover:text-red-600 font-medium transition-all duration-300 hover:scale-105"
                   >
                     Sign Out
                   </button>
                 </div>
               ) : (
                 <>
-                  <Link href="/auth" className="px-4 py-2 text-gray-600 hover:text-blue-600 font-medium transition-colors">
+                  <Link href="/auth" className="px-4 py-2 text-gray-600 hover:text-blue-600 font-medium transition-all duration-300 hover:scale-105">
                     Login
                   </Link>
-                  <Link href="/auth" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors">
+                  <Link href="/auth" className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:shadow-lg font-medium transition-all duration-300 hover:scale-105">
                     Sign Up
                   </Link>
                 </>

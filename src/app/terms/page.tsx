@@ -58,14 +58,14 @@ export default function TermsOfServicePage() {
                     <span>Service Description</span>
                   </h2>
                   <p className="text-gray-700 leading-relaxed mb-4">
-                    HostelHub is a platform that connects students and travelers with hostel accommodations. Our services include:
+                    HostelHub is a specialized platform that connects students with quality hostel accommodations designed for student needs. Our services include:
                   </p>
                   <ul className="list-disc list-inside text-gray-700 space-y-2 ml-4">
-                    <li>Hostel listing and discovery</li>
-                    <li>Booking management and reservations</li>
-                    <li>Payment processing</li>
-                    <li>Communication between hosts and guests</li>
-                    <li>Review and rating system</li>
+                    <li>Student accommodation listing and discovery</li>
+                    <li>Hostel inquiry and arrangement management</li>
+                    <li>Secure payment processing for accommodations</li>
+                    <li>Communication between hostel owners and students</li>
+                    <li>Review and rating system for student accommodations</li>
                   </ul>
                 </section>
 
@@ -79,21 +79,21 @@ export default function TermsOfServicePage() {
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900 mb-2">For Hostel Owners</h3>
                       <ul className="list-disc list-inside text-gray-700 space-y-1 ml-4">
-                        <li>Provide accurate and up-to-date information about your hostel</li>
-                        <li>Maintain the quality and safety standards as advertised</li>
-                        <li>Respond promptly to booking requests and inquiries</li>
-                        <li>Honor confirmed bookings and reservations</li>
-                        <li>Comply with local laws and regulations</li>
+                        <li>Provide accurate and up-to-date information about your student accommodation</li>
+                        <li>Maintain quality and safety standards suitable for students</li>
+                        <li>Respond promptly to student accommodation requests and inquiries</li>
+                        <li>Honor confirmed accommodation arrangements</li>
+                        <li>Comply with local laws and student housing regulations</li>
                       </ul>
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">For Guests</h3>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">For Students</h3>
                       <ul className="list-disc list-inside text-gray-700 space-y-1 ml-4">
-                        <li>Provide accurate personal information</li>
-                        <li>Respect hostel rules and policies</li>
-                        <li>Pay for services as agreed</li>
-                        <li>Treat hostel property with care</li>
-                        <li>Communicate any issues promptly</li>
+                        <li>Provide accurate personal and educational information</li>
+                        <li>Respect hostel rules and accommodation policies</li>
+                        <li>Pay for accommodation services as agreed</li>
+                        <li>Treat hostel property with care and respect</li>
+                        <li>Communicate any accommodation issues promptly</li>
                       </ul>
                     </div>
                   </div>
@@ -101,21 +101,21 @@ export default function TermsOfServicePage() {
 
                 {/* Booking and Payment */}
                 <section>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4">Booking and Payment Terms</h2>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-4">Accommodation and Payment Terms</h2>
                   <div className="space-y-4">
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Booking Process</h3>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Accommodation Process</h3>
                       <ul className="list-disc list-inside text-gray-700 space-y-2 ml-4">
-                        <li>Bookings are confirmed upon payment receipt</li>
-                        <li>Prices are subject to change without notice</li>
+                        <li>Student accommodation arrangements are confirmed upon payment receipt</li>
+                        <li>Accommodation rates are subject to change without notice</li>
                         <li>All payments are processed securely through our platform</li>
-                        <li>Refunds are subject to hostel cancellation policies</li>
+                        <li>Refunds are subject to individual hostel cancellation policies</li>
                       </ul>
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900 mb-2">Cancellation Policy</h3>
                       <ul className="list-disc list-inside text-gray-700 space-y-2 ml-4">
-                        <li>Cancellation policies vary by hostel</li>
+                        <li>Cancellation policies vary by hostel and accommodation type</li>
                         <li>Refunds are processed according to individual hostel policies</li>
                         <li>Service fees may be non-refundable</li>
                         <li>Contact hostel owners directly for specific cancellation terms</li>
@@ -162,8 +162,8 @@ export default function TermsOfServicePage() {
                 <section>
                   <h2 className="text-2xl font-bold text-gray-900 mb-4">Limitation of Liability</h2>
                   <p className="text-gray-700 leading-relaxed">
-                    HostelHub acts as a platform connecting hosts and guests. We are not responsible for the quality of accommodations, 
-                    the conduct of users, or any disputes between hosts and guests. Our liability is limited to the amount paid for our services.
+                    HostelHub acts as a platform connecting hostel owners with students seeking accommodation. We are not responsible for the quality of accommodations, 
+                    the conduct of users, or any disputes between hostel owners and students. Our liability is limited to the amount paid for our platform services.
                   </p>
                 </section>
 

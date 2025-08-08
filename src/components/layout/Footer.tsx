@@ -16,7 +16,7 @@ export default function Footer() {
               </div>
               <div>
                 <h3 className="text-lg font-bold">HostelHub</h3>
-                <p className="text-gray-400 text-xs">Trusted Hostel Booking</p>
+                <p className="text-gray-400 text-xs">Trusted Hostels</p>
               </div>
             </div>
             <p className="text-gray-300 mb-4 text-sm leading-relaxed max-w-sm">

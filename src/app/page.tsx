@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { Search, Shield, CheckCircle, HeadphonesIcon, MapPin as MapPinIcon, RefreshCw } from 'lucide-react';
+import { Search, Shield, CheckCircle, HeadphonesIcon, MapPin as MapPinIcon, RefreshCw, Sparkles, TrendingUp, Users2, Star } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import HostelCard from '@/components/hostel/HostelCard';
 import { useHostels } from '@/hooks/useHostels';
@@ -12,6 +12,13 @@ export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchLocation, setSearchLocation] = useState('');
   const [isFiltered, setIsFiltered] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const heroRef = useRef<HTMLDivElement>(null);
+
+  // Animation trigger on page load
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
 
   // Auto-search effect
   useEffect(() => {
@@ -47,23 +54,64 @@ export default function HomePage() {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative py-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        {/* Background Elements */}
+      <section ref={heroRef} className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden min-h-[90vh] flex items-center">
+        {/* Enhanced Background Elements */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-indigo-50"></div>
-        <div className="absolute top-0 left-0 w-72 h-72 bg-blue-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-        <div className="absolute top-0 right-0 w-72 h-72 bg-purple-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+        
+        {/* Floating geometric shapes */}
+        <div className="absolute top-10 left-10 w-20 h-20 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-2xl transform rotate-45 animate-float"></div>
+        <div className="absolute top-32 right-20 w-16 h-16 bg-gradient-to-br from-indigo-400/20 to-pink-400/20 rounded-full animate-float-delayed"></div>
+        <div className="absolute bottom-32 left-32 w-12 h-12 bg-gradient-to-br from-purple-400/20 to-blue-400/20 rounded-lg transform rotate-12 animate-float-slow"></div>
+        
+        {/* Animated blobs */}
+        <div className="absolute top-0 left-0 w-72 h-72 bg-gradient-to-br from-blue-200/40 to-purple-200/40 rounded-full mix-blend-multiply filter blur-xl animate-blob-enhanced"></div>
+        <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-br from-purple-200/40 to-pink-200/40 rounded-full mix-blend-multiply filter blur-xl animate-blob-enhanced animation-delay-2000"></div>
+        <div className="absolute -bottom-8 left-20 w-96 h-96 bg-gradient-to-br from-pink-200/40 to-indigo-200/40 rounded-full mix-blend-multiply filter blur-xl animate-blob-enhanced animation-delay-4000"></div>
+        
+        {/* Sparkle effects */}
+        <div className="absolute top-20 left-1/4 animate-sparkle">
+          <Sparkles className="w-6 h-6 text-blue-400/60" />
+        </div>
+        <div className="absolute bottom-20 right-1/4 animate-sparkle animation-delay-1000">
+          <Sparkles className="w-4 h-4 text-purple-400/60" />
+        </div>
+        <div className="absolute top-1/3 right-1/3 animate-sparkle animation-delay-3000">
+          <Sparkles className="w-5 h-5 text-pink-400/60" />
+        </div>
         
         <div className="relative max-w-7xl mx-auto">
           <div className="text-center">
-            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+            {/* Animated badge */}
+            <div className={`inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 border border-blue-200/50 mb-8 transform transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
+              <TrendingUp className="w-4 h-4 text-blue-600 mr-2" />
+              <span className="text-sm font-medium text-blue-700">Pakistan&apos;s #1 Hostel Platform</span>
+              <Star className="w-4 h-4 text-yellow-500 ml-2" />
+            </div>
+            
+            <h1 className={`text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight transform transition-all duration-1000 delay-200 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
               Find Your Perfect
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600"> Hostel</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 animate-gradient-x"> Hostel</span>
             </h1>
             
-            <p className="text-lg md:text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+            <p className={`text-lg md:text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed transform transition-all duration-1000 delay-400 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
               Discover amazing hostels across Pakistan. Book affordable, comfortable accommodations with ease.
             </p>
+            
+            {/* Stats badges */}
+            <div className={`flex flex-wrap justify-center items-center gap-6 mb-12 transform transition-all duration-1000 delay-600 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+              <div className="flex items-center px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-lg border border-white/20">
+                <Users2 className="w-5 h-5 text-blue-600 mr-2" />
+                <span className="text-sm font-semibold text-gray-700">10K+ Students</span>
+              </div>
+              <div className="flex items-center px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-lg border border-white/20">
+                <Shield className="w-5 h-5 text-green-600 mr-2" />
+                <span className="text-sm font-semibold text-gray-700">Verified Hostels</span>
+              </div>
+              <div className="flex items-center px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-lg border border-white/20">
+                <CheckCircle className="w-5 h-5 text-purple-600 mr-2" />
+                <span className="text-sm font-semibold text-gray-700">Instant Booking</span>
+              </div>
+            </div>
             
             {/* Transparent Search Section */}
             <div className="max-w-4xl mx-auto">
