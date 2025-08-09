@@ -73,7 +73,24 @@ export default function HostelCard({ hostel }: HostelCardProps) {
 
   return (
     <Link href={`/hostels/${hostel.hostelId}`}>
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden group cursor-pointer transform hover:-translate-y-2">
+      <div 
+        className="bg-white rounded-2xl border border-gray-100 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden group cursor-pointer transform hover:-translate-y-2"
+        data-tracking="hostel-card"
+        data-hostel-id={hostel.hostelId}
+        data-hostel-name={hostel.hostelName}
+        data-hostel-location={`${hostel.city}, ${hostel.area}`}
+        onClick={() => {
+          // Push to dataLayer for GTM
+          window.dataLayer?.push({
+            'event': 'hostel_view',
+            'hostel_data': {
+              'id': hostel.hostelId,
+              'name': hostel.hostelName,
+              'location': `${hostel.city}, ${hostel.area}`
+            }
+          });
+        }}
+      >
         {/* Image */}
         <div className="relative h-56 overflow-hidden">
           <img

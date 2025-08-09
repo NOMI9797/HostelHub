@@ -26,6 +26,14 @@ export default function HomePage() {
       if (searchQuery || searchLocation) {
         searchHostels(searchQuery, searchLocation);
         setIsFiltered(true);
+        // Push search event to dataLayer
+        window.dataLayer?.push({
+          'event': 'hostel_search',
+          'search_data': {
+            'query': searchQuery,
+            'location': searchLocation
+          }
+        });
       } else if (isFiltered) {
         clearSearch();
         setIsFiltered(false);
@@ -285,33 +293,33 @@ export default function HomePage() {
           </div>
           
           {/* Trust Indicators in a Row */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center p-8 bg-white/60 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
-              <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <Shield className="w-8 h-8 text-blue-600" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+            <div className="text-center p-6 sm:p-8 bg-white/60 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                <Shield className="w-7 h-7 sm:w-8 sm:h-8 text-blue-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Verified & Safe</h3>
-              <p className="text-gray-600 leading-relaxed">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">Verified & Safe</h3>
+              <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
                 Every hostel undergoes strict verification. We ensure safety, cleanliness, and quality standards for your peace of mind.
               </p>
             </div>
             
-            <div className="text-center p-8 bg-white/60 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
-              <div className="w-16 h-16 bg-purple-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <Users2 className="w-8 h-8 text-purple-600" />
+            <div className="text-center p-6 sm:p-8 bg-white/60 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-purple-50 rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                <Users2 className="w-7 h-7 sm:w-8 sm:h-8 text-purple-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Student-Focused</h3>
-              <p className="text-gray-600 leading-relaxed">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">Student-Focused</h3>
+              <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
                 Tailored specifically for students, our platform helps you find accommodation that suits your academic needs and budget.
               </p>
             </div>
             
-            <div className="text-center p-8 bg-white/60 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
-              <div className="w-16 h-16 bg-green-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <HeadphonesIcon className="w-8 h-8 text-green-600" />
+            <div className="text-center p-6 sm:p-8 bg-white/60 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-green-50 rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                <HeadphonesIcon className="w-7 h-7 sm:w-8 sm:h-8 text-green-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">24/7 Support</h3>
-              <p className="text-gray-600 leading-relaxed">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">24/7 Support</h3>
+              <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
                 Our dedicated support team is available round-the-clock to assist with inquiries and any concerns you may have.
               </p>
             </div>
@@ -319,44 +327,24 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Made with Love Section */}
+      {/* Call to Action Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-transparent">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="bg-white/20 backdrop-blur-sm rounded-3xl p-12 relative overflow-hidden border border-white/30">
+          <div className="bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 rounded-3xl p-12 shadow-2xl border border-white/30 relative overflow-hidden">
             {/* Background decorative elements */}
-            <div className="absolute top-0 left-0 w-full h-full opacity-5">
-              <div className="absolute top-4 left-4 w-16 h-16 bg-pink-300 rounded-full blur-xl"></div>
-              <div className="absolute bottom-4 right-4 w-20 h-20 bg-red-300 rounded-full blur-xl"></div>
-              <div className="absolute top-1/2 left-1/4 w-12 h-12 bg-rose-300 rounded-full blur-lg"></div>
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute top-0 left-0 w-full h-full bg-grid-pattern"></div>
+              <div className="absolute top-4 right-4 w-24 h-24 bg-blue-200 rounded-full blur-2xl"></div>
+              <div className="absolute bottom-4 left-4 w-32 h-32 bg-purple-200 rounded-full blur-2xl"></div>
             </div>
             
             <div className="relative z-10">
-              <div className="mb-6">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-pink-400/80 to-red-500/80 rounded-full shadow-lg mb-4 backdrop-blur-sm">
-                  <span className="text-white text-2xl">❤️</span>
-                </div>
-              </div>
-              
-              <h2 className="text-4xl font-bold text-gray-900 mb-3">
-                Made with{' '}
-                <span className="bg-gradient-to-r from-pink-600 to-red-600 bg-clip-text text-transparent">
-                  Love
-                </span>
+              <h2 className="text-4xl font-bold text-gray-900 mb-6">
+                Ready to Find Your Perfect Hostel?
               </h2>
-              
-              <p className="text-xl text-gray-700 mb-6">
-                by{' '}
-                <span className="font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  SYNTAX
-                </span>
+              <p className="text-xl text-gray-700 max-w-2xl mx-auto">
+                Join our growing community of students and discover quality accommodations that feel like home.
               </p>
-              
-              <div className="max-w-md mx-auto">
-                <p className="text-gray-600 leading-relaxed">
-                  Crafted with passion and dedication by the SYNTAX team. 
-                  We believe in creating solutions that make a difference in students&apos; lives.
-                </p>
-              </div>
             </div>
           </div>
         </div>

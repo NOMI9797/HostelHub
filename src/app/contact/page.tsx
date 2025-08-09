@@ -2,7 +2,7 @@
 
 import Header from '@/components/layout/Header';
 import Link from 'next/link';
-import { ArrowLeft, Mail, Phone, MapPin, Clock, MessageSquare } from 'lucide-react';
+import { ArrowLeft, Mail, Phone, Clock, MessageSquare } from 'lucide-react';
 
 export default function ContactPage() {
   return (
@@ -50,8 +50,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h3 className="font-semibold text-gray-900 mb-1">Email Us</h3>
-                      <p className="text-gray-600">nomiahmed307@gmail.com</p>
-                      <p className="text-gray-600">nomiahmed307@gmail.com</p>
+                      <p className="text-gray-600">Syntax.ai.dev@gmail.com</p>
                     </div>
                   </div>
 
@@ -62,20 +61,17 @@ export default function ContactPage() {
                     <div>
                       <h3 className="font-semibold text-gray-900 mb-1">Call Us</h3>
                       <p className="text-gray-600">03121281801</p>
-                      <p className="text-gray-600">03121281801</p>
                     </div>
                   </div>
 
                   <div className="flex items-start space-x-4">
                     <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <MapPin className="w-5 h-5 text-purple-600" />
+                      <MessageSquare className="w-5 h-5 text-purple-600" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900 mb-1">Visit Us</h3>
+                      <h3 className="font-semibold text-gray-900 mb-1">Support</h3>
                       <p className="text-gray-600">
-                        HostelHub Headquarters<br />
-                        Islamabad, Pakistan<br />
-                        Postal Code: 44000
+                        Our support team is here to help you with any questions or concerns about student accommodations.
                       </p>
                     </div>
                   </div>
@@ -169,15 +165,23 @@ export default function ContactPage() {
                     <Mail className="w-5 h-5 text-blue-600" />
                     <div>
                       <p className="font-semibold text-gray-900">Email</p>
-                      <p className="text-sm text-gray-600">nomiahmed307@gmail.com</p>
+                      <p className="text-sm text-gray-600">Syntax.ai.dev@gmail.com</p>
                     </div>
                   </div>
                   
                   <div className="flex items-center space-x-3 p-3 bg-green-50 rounded-lg">
                     <Phone className="w-5 h-5 text-green-600" />
                     <div>
-                      <p className="font-semibold text-gray-900">Phone</p>
+                      <p className="font-semibold text-gray-900">Support Line</p>
                       <p className="text-sm text-gray-600">03121281801</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-3 p-3 bg-purple-50 rounded-lg">
+                    <Clock className="w-5 h-5 text-purple-600" />
+                    <div>
+                      <p className="font-semibold text-gray-900">Response Time</p>
+                      <p className="text-sm text-gray-600">Within 24 hours</p>
                     </div>
                   </div>
                 </div>

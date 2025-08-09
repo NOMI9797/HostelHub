@@ -167,9 +167,9 @@ export default function PrivacyPolicyPage() {
                   </p>
                   <div className="mt-4 p-4 bg-gray-50 rounded-lg">
                     <p className="text-gray-700">
-                      <strong>Email:</strong> nomiahmed307@gmail.com<br />
-                      <strong>Address:</strong> HostelHub Privacy Team<br />
-                      <strong>Phone:</strong> 03121281801
+                      <strong>Email:</strong> Syntax.ai.dev@gmail.com<br />
+                      <strong>Phone:</strong> 03121281801<br />
+                      <strong>Address:</strong> Islamabad, Pakistan
                     </p>
                   </div>
                 </section>

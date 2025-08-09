@@ -335,13 +335,24 @@ export default function HostelPostingForm() {
         ownerPhone: formData.ownerPhone,
         roomTypes: formData.roomTypes.map(rt => ({
           ...rt,
-          type: rt.type.replace(/Seater/g, 'Bed') // Replace Seater with Bed
+          type: rt.type.replace(/Seater/g, 'Bed')
         })),
         facilities: formData.facilities,
         genderSpecific: formData.genderSpecific,
       };
 
-
+      // Push hostel posting event to dataLayer
+      window.dataLayer?.push({
+        'event': 'hostel_post',
+        'post_data': {
+          'hostel_name': formData.hostelName,
+          'hostel_type': formData.genderSpecific,
+          'city': formData.city,
+          'area': formData.area,
+          'facilities_count': formData.facilities.length,
+          'room_types_count': formData.roomTypes.filter(rt => rt.available).length
+        }
+      });
 
       await HostelService.createHostel(hostelData);
       

@@ -3,7 +3,6 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import CachePerformance from "@/components/CachePerformance";
 import Footer from "@/components/layout/Footer";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import GoogleTagManager from "@/components/analytics/GoogleTagManager";
@@ -66,7 +65,6 @@ export default function RootLayout({
           <AuthProvider>
             {children}
             <Footer />
-            <CachePerformance />
           </AuthProvider>
         </ErrorBoundary>
         <GoogleAnalytics />

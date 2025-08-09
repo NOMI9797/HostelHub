@@ -26,7 +26,7 @@ export default function Footer() {
             <div className="space-y-1">
               <div className="flex items-center space-x-2 text-gray-300 text-sm">
                 <Mail className="w-3 h-3" />
-                <span>nomiahmed307@gmail.com</span>
+                <span>Syntax.ai.dev@gmail.com</span>
               </div>
               <div className="flex items-center space-x-2 text-gray-300 text-sm">
                 <Phone className="w-3 h-3" />
@@ -107,6 +107,9 @@ export default function Footer() {
         <div className="border-t border-gray-800 mt-6 pt-4 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-xs">
             © {new Date().getFullYear()} HostelHub. All rights reserved.
+          </p>
+          <p className="text-gray-400 text-xs mt-2 md:mt-0">
+            Made by <span className="text-blue-400">SYNTAX</span>
           </p>
         </div>
       </div>
