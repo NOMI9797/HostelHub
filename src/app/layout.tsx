@@ -6,6 +6,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Footer from "@/components/layout/Footer";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import GoogleTagManager from "@/components/analytics/GoogleTagManager";
+import GoogleAdsense from "@/components/analytics/GoogleAdsense";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -69,6 +70,7 @@ export default function RootLayout({
         </ErrorBoundary>
         <GoogleAnalytics />
         <GoogleTagManager />
+        <GoogleAdsense />
       </body>
     </html>
   );
