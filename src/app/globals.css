@@ -18,6 +18,101 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-inter), Arial, Helvetica, sans-serif;
+  /* Mobile optimization */
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /* Prevent horizontal scroll on mobile */
+  overflow-x: hidden;
+}
+
+/* Mobile-specific optimizations */
+.mobile-device .animate-blob,
+.mobile-device .animate-blob-enhanced,
+.mobile-device .animate-float,
+.mobile-device .animate-float-delayed,
+.mobile-device .animate-float-slow,
+.mobile-device .animate-sparkle {
+  animation: none !important;
+  transform: none !important;
+}
+
+.mobile-device .backdrop-blur-sm,
+.mobile-device .backdrop-blur-md {
+  backdrop-filter: none;
+}
+
+/* Ensure proper mobile rendering */
+@media (max-width: 768px) {
+  /* Force hardware acceleration for better mobile performance */
+  .transform,
+  .transition-transform {
+    will-change: transform;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+  
+  /* Optimize text rendering on mobile */
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  
+  /* Ensure proper touch scrolling */
+  .overflow-hidden {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Optimize images for mobile */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* AdSense compatibility */
+.adsbygoogle {
+  display: block;
+  text-align: center;
+  margin: 20px auto;
+}
+
+/* Ensure proper mobile viewport */
+@media screen and (max-width: 480px) {
+  html, body {
+    width: 100%;
+    min-width: 320px;
+    overflow-x: hidden;
+  }
+}
+
+/* Dashboard sidebar mobile optimizations */
+@media (max-width: 1024px) {
+  .dashboard-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .dashboard-sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .dashboard-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 40;
+  }
 }
 
 /* Enhanced Professional Animations */

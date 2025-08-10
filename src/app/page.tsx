@@ -13,30 +13,47 @@ export default function HomePage() {
   const [searchLocation, setSearchLocation] = useState('');
   const [isFiltered, setIsFiltered] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [mobileError, setMobileError] = useState<string | null>(null);
   const heroRef = useRef<HTMLDivElement>(null);
 
   // Animation trigger on page load
   useEffect(() => {
     setIsVisible(true);
+    
+    // Mobile-specific error handling
+    if (typeof window !== 'undefined') {
+      const isMobile = window.innerWidth <= 768;
+      if (isMobile) {
+        // Disable complex animations on mobile
+        document.body.classList.add('mobile-device');
+      }
+    }
   }, []);
 
   // Auto-search effect
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (searchQuery || searchLocation) {
-        searchHostels(searchQuery, searchLocation);
-        setIsFiltered(true);
-        // Push search event to dataLayer
-        window.dataLayer?.push({
-          'event': 'hostel_search',
-          'search_data': {
-            'query': searchQuery,
-            'location': searchLocation
-          }
-        });
+        try {
+          searchHostels(searchQuery, searchLocation);
+          setIsFiltered(true);
+          setMobileError(null);
+          // Push search event to dataLayer
+          window.dataLayer?.push({
+            'event': 'hostel_search',
+            'search_data': {
+              'query': searchQuery,
+              'location': searchLocation
+            }
+          });
+        } catch (error) {
+          setMobileError('Search failed. Please try again.');
+          console.error('Search error:', error);
+        }
       } else if (isFiltered) {
         clearSearch();
         setIsFiltered(false);
+        setMobileError(null);
       }
     }, 500); // 500ms delay to avoid too many API calls
 
@@ -48,10 +65,17 @@ export default function HomePage() {
     setSearchLocation('');
     setIsFiltered(false);
     clearSearch();
+    setMobileError(null);
   };
 
   const handleRefresh = async () => {
-    await refetch();
+    try {
+      setMobileError(null);
+      await refetch();
+    } catch (error) {
+      setMobileError('Failed to refresh. Please try again.');
+      console.error('Refresh error:', error);
+    }
   };
 
 
@@ -63,27 +87,27 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <section ref={heroRef} className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden min-h-[90vh] flex items-center">
-        {/* Enhanced Background Elements */}
+        {/* Enhanced Background Elements - Mobile Optimized */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-indigo-50"></div>
         
-        {/* Floating geometric shapes */}
-        <div className="absolute top-10 left-10 w-20 h-20 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-2xl transform rotate-45 animate-float"></div>
-        <div className="absolute top-32 right-20 w-16 h-16 bg-gradient-to-br from-indigo-400/20 to-pink-400/20 rounded-full animate-float-delayed"></div>
-        <div className="absolute bottom-32 left-32 w-12 h-12 bg-gradient-to-br from-purple-400/20 to-blue-400/20 rounded-lg transform rotate-12 animate-float-slow"></div>
+        {/* Floating geometric shapes - Hidden on mobile for better performance */}
+        <div className="absolute top-10 left-10 w-20 h-20 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-2xl transform rotate-45 animate-float hidden md:block"></div>
+        <div className="absolute top-32 right-20 w-16 h-16 bg-gradient-to-br from-indigo-400/20 to-pink-400/20 rounded-full animate-float-delayed hidden md:block"></div>
+        <div className="absolute bottom-32 left-32 w-12 h-12 bg-gradient-to-br from-purple-400/20 to-blue-400/20 rounded-lg transform rotate-12 animate-float-slow hidden md:block"></div>
         
-        {/* Animated blobs */}
-        <div className="absolute top-0 left-0 w-72 h-72 bg-gradient-to-br from-blue-200/40 to-purple-200/40 rounded-full mix-blend-multiply filter blur-xl animate-blob-enhanced"></div>
-        <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-br from-purple-200/40 to-pink-200/40 rounded-full mix-blend-multiply filter blur-xl animate-blob-enhanced animation-delay-2000"></div>
-        <div className="absolute -bottom-8 left-20 w-96 h-96 bg-gradient-to-br from-pink-200/40 to-indigo-200/40 rounded-full mix-blend-multiply filter blur-xl animate-blob-enhanced animation-delay-4000"></div>
+        {/* Animated blobs - Hidden on mobile for better performance */}
+        <div className="absolute top-0 left-0 w-72 h-72 bg-gradient-to-br from-blue-200/40 to-purple-200/40 rounded-full mix-blend-multiply filter blur-xl animate-blob-enhanced hidden md:block"></div>
+        <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-br from-purple-200/40 to-pink-200/40 rounded-full mix-blend-multiply filter blur-xl animate-blob-enhanced animation-delay-2000 hidden md:block"></div>
+        <div className="absolute -bottom-8 left-20 w-96 h-96 bg-gradient-to-br from-pink-200/40 to-indigo-200/40 rounded-full mix-blend-multiply filter blur-xl animate-blob-enhanced animation-delay-4000 hidden md:block"></div>
         
-        {/* Sparkle effects */}
-        <div className="absolute top-20 left-1/4 animate-sparkle">
+        {/* Sparkle effects - Hidden on mobile for better performance */}
+        <div className="absolute top-20 left-1/4 animate-sparkle hidden md:block">
           <Sparkles className="w-6 h-6 text-blue-400/60" />
         </div>
-        <div className="absolute bottom-20 right-1/4 animate-sparkle animation-delay-1000">
+        <div className="absolute bottom-20 right-1/4 animate-sparkle animation-delay-1000 hidden md:block">
           <Sparkles className="w-4 h-4 text-purple-400/60" />
         </div>
-        <div className="absolute top-1/3 right-1/3 animate-sparkle animation-delay-3000">
+        <div className="absolute top-1/3 right-1/3 animate-sparkle animation-delay-3000 hidden md:block">
           <Sparkles className="w-5 h-5 text-pink-400/60" />
         </div>
         
@@ -226,6 +250,22 @@ export default function HomePage() {
               <p className="text-lg text-gray-600 font-medium">
                 {isFiltered ? 'Searching for perfect matches...' : 'Loading amazing hostels...'}
               </p>
+            </div>
+          ) : mobileError ? (
+            <div className="text-center py-16">
+              <div className="w-32 h-32 bg-gradient-to-br from-red-100 to-red-200 rounded-full flex items-center justify-center mx-auto mb-8">
+                <svg className="w-16 h-16 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Something went wrong</h3>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">{mobileError}</p>
+              <button
+                onClick={handleRefresh}
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-8 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              >
+                Try Again
+              </button>
             </div>
           ) : hostels.length > 0 ? (
             <>

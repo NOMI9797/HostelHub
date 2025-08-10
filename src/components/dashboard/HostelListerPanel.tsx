@@ -15,7 +15,8 @@ import {
   Clock,
   CheckCircle,
   XCircle,
-  AlertTriangle
+  AlertTriangle,
+  Menu
 } from 'lucide-react';
 
 import { useRouter } from 'next/navigation';
@@ -487,6 +488,21 @@ export default function HostelListerPanel({ user }: HostelListerPanelProps) {
       {/* Unified Header */}
       <Header />
 
+      {/* Mobile Sidebar Toggle Button */}
+      <div className="lg:hidden fixed top-20 left-4 z-50">
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className={`bg-white border border-gray-200 rounded-lg p-3 shadow-lg hover:bg-gray-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transform hover:scale-105 ${
+            sidebarOpen ? 'bg-blue-50 border-blue-200' : ''
+          }`}
+          aria-label="Toggle sidebar menu"
+        >
+          <Menu className={`w-5 h-5 transition-colors duration-200 ${
+            sidebarOpen ? 'text-blue-600' : 'text-gray-600'
+          }`} />
+        </button>
+      </div>
+
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
         <div 
@@ -498,48 +514,64 @@ export default function HostelListerPanel({ user }: HostelListerPanelProps) {
       {/* Main Container with Sidebar and Content */}
       <div className="flex flex-1">
         {/* Sidebar */}
-        <div className={`fixed top-16 left-0 z-30 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 lg:translate-x-0 lg:relative lg:top-0 ${
+        <div className={`fixed top-16 left-0 z-50 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 lg:translate-x-0 lg:relative lg:top-0 lg:z-30 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}>
           <div className="flex flex-col h-[calc(100vh-4rem)] lg:h-full">
+            {/* Close button for mobile */}
+            <div className="lg:hidden flex justify-end p-4 border-b border-gray-200">
+              <button
+                onClick={() => setSidebarOpen(false)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <XCircle className="w-5 h-5 text-gray-600" />
+              </button>
+            </div>
+            
             {/* Navigation */}
-            <nav className="flex-1 p-6 space-y-2">
+            <nav className="flex-1 p-4 lg:p-6 space-y-3">
               {menuItems.map((item) => (
                 <button
                   key={item.id}
-                  onClick={() => setActiveTab(item.id)}
-                  className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 ${
+                  onClick={() => {
+                    setActiveTab(item.id);
+                    // Close sidebar on mobile after clicking a menu item
+                    if (window.innerWidth < 1024) {
+                      setSidebarOpen(false);
+                    }
+                  }}
+                  className={`w-full flex items-center space-x-3 p-4 lg:p-3 rounded-lg transition-all duration-200 ${
                     activeTab === item.id
                       ? 'bg-blue-50 text-blue-700 border border-blue-200'
                       : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
                   }`}
                 >
-                  <div className={`w-8 h-8 ${getIconColor(item.color)} rounded-lg flex items-center justify-center`}>
-                    <item.icon className="w-4 h-4" />
+                  <div className={`w-10 h-10 lg:w-8 lg:h-8 ${getIconColor(item.color)} rounded-lg flex items-center justify-center flex-shrink-0`}>
+                    <item.icon className="w-5 h-5 lg:w-4 lg:h-4" />
                   </div>
-                  <span className="font-medium">{item.label}</span>
+                  <span className="font-medium text-base lg:text-sm">{item.label}</span>
                 </button>
               ))}
             </nav>
 
             {/* User Info */}
-            <div className="p-6 border-t border-gray-200">
+            <div className="p-4 lg:p-6 border-t border-gray-200">
               <div className="text-center">
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <span className="text-blue-600 font-bold text-lg">
+                <div className="w-16 h-16 lg:w-12 lg:h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <span className="text-blue-600 font-bold text-xl lg:text-lg">
                     {user?.email?.charAt(0).toUpperCase()}
                   </span>
                 </div>
-                <p className="text-gray-600 text-xs">Hostel Lister</p>
+                <p className="text-gray-600 text-sm lg:text-xs">Hostel Lister</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 lg:ml-0">
+        <div className="flex-1 lg:ml-0 pt-16 lg:pt-0">
           {/* Page Content */}
-          <main className="min-h-full">
+          <main className="min-h-full p-4 lg:p-0">
             {renderContent()}
           </main>
         </div>
