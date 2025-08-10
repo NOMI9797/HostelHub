@@ -6,7 +6,6 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Footer from "@/components/layout/Footer";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import GoogleTagManager from "@/components/analytics/GoogleTagManager";
-import GoogleAdsense from "@/components/analytics/GoogleAdsense";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -56,21 +55,25 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} font-sans antialiased`}>
-        <ErrorBoundary>
-          <AuthProvider>
-            {children}
-            <Footer />
-          </AuthProvider>
-        </ErrorBoundary>
+      <head>
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5489167867153548"
+          crossOrigin="anonymous"
+        />
+      </head>
+      <body className={inter.className}>
+        <AuthProvider>
+          {children}
+          <Footer />
+        </AuthProvider>
         <GoogleAnalytics />
         <GoogleTagManager />
-        <GoogleAdsense />
       </body>
     </html>
   );
