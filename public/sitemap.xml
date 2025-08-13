@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+<!-- HostelHub Sitemap - Auto-generated on 8/13/2025 -->
+
+<url>
+  <loc>https://www.hostelhub.pro/</loc>
+  <lastmod>2025-08-13T17:05:21.050Z</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>1.00</priority>
+</url>
+
+<url>
+  <loc>https://www.hostelhub.pro/about</loc>
+  <lastmod>2025-08-13T17:05:21.050Z</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.80</priority>
+</url>
+
+<url>
+  <loc>https://www.hostelhub.pro/contact</loc>
+  <lastmod>2025-08-13T17:05:21.050Z</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.80</priority>
+</url>
+
+<url>
+  <loc>https://www.hostelhub.pro/explore-hostels</loc>
+  <lastmod>2025-08-13T17:05:21.050Z</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.90</priority>
+</url>
+
+<url>
+  <loc>https://www.hostelhub.pro/post-hostel</loc>
+  <lastmod>2025-08-13T17:05:21.050Z</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.70</priority>
+</url>
+
+<url>
+  <loc>https://www.hostelhub.pro/auth</loc>
+  <lastmod>2025-08-13T17:05:21.050Z</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.70</priority>
+</url>
+
+<url>
+  <loc>https://www.hostelhub.pro/privacy</loc>
+  <lastmod>2025-08-13T17:05:21.050Z</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.30</priority>
+</url>
+
+<url>
+  <loc>https://www.hostelhub.pro/terms</loc>
+  <lastmod>2025-08-13T17:05:21.050Z</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.30</priority>
+</url>
+
+</urlset>

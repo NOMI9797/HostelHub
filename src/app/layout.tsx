@@ -13,9 +13,12 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "HostelHub - Student Hostel Accommodation Platform in Pakistan",
-  description: "Pakistan's leading platform for student hostel accommodations. Find verified, affordable, and quality hostels near your educational institution. Safe and trusted student housing solutions.",
-  keywords: "student hostels, hostel accommodation, Pakistan hostels, student housing, university accommodation, college hostels, safe student hostels",
+  title: {
+    default: "HostelHub - Find Your Perfect Hostel Accommodation",
+    template: "%s | HostelHub"
+  },
+  description: "Discover and book verified hostels near universities and institutions. Find affordable, safe, and comfortable accommodation with HostelHub - your trusted hostel booking platform.",
+  keywords: ["hostel", "accommodation", "student housing", "university hostel", "budget accommodation", "hostel booking", "student living"],
   authors: [{ name: "HostelHub Team" }],
   creator: "HostelHub",
   publisher: "HostelHub",
@@ -24,13 +27,31 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
+  metadataBase: new URL('https://www.hostelhub.pro'),
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
-    title: "HostelHub - Student Hostel Accommodation Platform",
-    description: "Find verified student hostels across Pakistan. Safe, affordable, and trusted accommodation for students.",
-    url: "https://www.hostelhub.pro",
-    siteName: "HostelHub",
-    locale: "en_US",
-    type: "website"
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://www.hostelhub.pro',
+    title: 'HostelHub - Find Your Perfect Hostel Accommodation',
+    description: 'Discover and book verified hostels near universities and institutions. Find affordable, safe, and comfortable accommodation.',
+    siteName: 'HostelHub',
+    images: [
+      {
+        url: '/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'HostelHub - Hostel Booking Platform',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'HostelHub - Find Your Perfect Hostel Accommodation',
+    description: 'Discover and book verified hostels near universities and institutions.',
+    images: ['/og-image.jpg'],
   },
   robots: {
     index: true,
@@ -38,13 +59,13 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
     },
   },
   verification: {
-    google: "add-your-google-site-verification-here",
+    google: 'your-google-verification-code', // Add your Google Search Console verification code here
   },
 };
 
